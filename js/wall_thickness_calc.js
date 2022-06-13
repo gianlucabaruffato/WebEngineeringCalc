@@ -136,12 +136,12 @@ function mainComputeAS() {
 
     let columns = [
     {title:"DN", field:"DN"},
-    {title:"NPS", field:"NPS"},
+    {title:"NPS", field:"NPS", minWidth:'30'},
     {title:"Hazard Value", field:"Hazard"},
     {title:"tf [mm]", field:"tf"},
     {title:"tm [mm]", field:"tm"},
     {title:"tn [mm]", field:"tn"},
-    {title:"Schedule", field:"sch"},
+    {title:"Schedule", field:"sch", minWidth:'65'},
     ]
 
     table.setColumns(columns)
@@ -233,13 +233,108 @@ function mainComputePOLIPLEX() {
     table.setData(dataArray)
 }
 
+function mainComputeASME() {
+    // Get pressure, read units and change to MPa
+    let pres = parseFloat(document.getElementById('Pres').value)
+    let presElement = document.getElementById('Pres-units')
+    let presUnit = presElement[presElement.value].innerHTML
+
+    let SE = parseFloat(document.getElementById('se').value)
+    let W = parseFloat(document.getElementById('W').value)
+    let C = parseFloat(document.getElementById('C').value)
+    let Y = parseFloat(document.getElementById('Y').value)
+
+
+    if (pres == 0 || isNaN(pres) || W == 0 || isNaN(W) || SE == 0 || isNaN(SE) || C == 0 || isNaN(C) || Y == 0 || isNaN(Y)) {
+        alert('Please check inputs for errors')
+        return
+    }
+
+    switch (presUnit) {
+        case 'MPa':
+        pres = Math.round(pres*145 * 1e4) / 1e4
+        break
+        case 'kPa':
+        pres = Math.round(pres/6.895 * 1e4) / 1e4
+        break
+        case 'bar':
+        pres = Math.round(pres*14.504 * 1e4) / 1e4
+        break
+        case 'PSI':
+        pres = Math.round(pres * 1e4) / 1e4
+        break
+    }
+
+    let tArray = []
+    let tmArray = []
+
+    let selectedSchArray = []
+
+
+    for (let i = 0; i < sizeArrayDN.length; i++) {
+        let schFound = false
+        let D = Math.round(dataJson.Tubing[i]['OD_mm']/25.4 * 1e4) / 1e4 // OD in inches
+
+        // required t
+        let t = Math.round(pres*D/(2*(SE*W+pres*Y)) * 1e4) / 1e4
+        let req_t = Math.round((t+C) * 1e4) / 1e4                     // min t considering C
+
+        let t_mm = Math.round(t*25.4 * 1e4) / 1e4   
+        let req_t_mm = Math.round(req_t*25.4 * 1e4) / 1e4   
+
+        tArray.push(t_mm)
+        tmArray.push(req_t_mm)
+
+        // find SCH for req_t
+        for (let a = 0; a < schArray.length; a++) {
+            if (dataJson.Tubing[i][schArray[a]] >= req_t_mm) {
+                selectedSchArray.push(schArrayComplete[a])
+                schFound = true
+                break
+            }
+        }
+
+        if (schFound == false) {
+            selectedSchArray.push('-')
+        }
+    }
+
+    // Create data dict using arrays
+
+    let data = {}
+    let dataArray = []
+
+    for (let i = 0; i < sizeArrayDN.length; i++) {
+        data = {}
+        data['id'] = i
+        data['DN'] = sizeArrayDN[i]
+        data['NPS'] = sizeArrayNPS[i]
+        data['t'] = tArray[i]
+        data['tm'] = tmArray[i]
+        data['sch'] = selectedSchArray[i]
+
+        dataArray.push(data)
+    }
+
+    let columns = [
+    {title:"DN", field:"DN"},
+    {title:"NPS", field:"NPS"},
+    {title:"t [mm]", field:"t"},
+    {title:"tm [mm]", field:"tm"},
+    {title:"Schedule", field:"sch"},
+    ]
+
+    table.setColumns(columns)
+    table.setData(dataArray)
+}
+
 
 document.getElementById('results').innerHTML = `<div id="results-table"></div>`
             
 var table = new Tabulator("#results-table", {
     height:0, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
     data:tableData, //assign data to table
-    layout:"fitDataStretch", //fit columns to width of table (optional)
+    layout:"fitColumns", 
     columnDefaults:{
         resizable:"header"
     },
@@ -248,43 +343,43 @@ var table = new Tabulator("#results-table", {
     ],
 });
 
-function createTable(type) {
-    switch (type) {
-        case 'AS':
-            document.getElementById('results').innerHTML = `<div id="results-table"></div>`
+// function createTable(type) {
+//     switch (type) {
+//         case 'AS':
+//             document.getElementById('results').innerHTML = `<div id="results-table"></div>`
             
-            table = new Tabulator("#results-table", {
-                height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                data:tableData, //assign data to table
-                layout:"fitColumns", //fit columns to width of table (optional)
-                columns:[ //Define Table Columns
-                    {title:"DN", field:"DN"},
-                    {title:"NPS", field:"NPS"},
-                    {title:"Hazard Value", field:"Hazard"},
-                    {title:"tf [mm]", field:"tf"},
-                    {title:"tm [mm]", field:"tm"},
-                    {title:"tn [mm]", field:"tn"},
-                    {title:"Schedule", field:"sch"},
-                ],
-            });
-            break
+//             table = new Tabulator("#results-table", {
+//                 height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+//                 data:tableData, //assign data to table
+//                 layout:"fitColumns", //fit columns to width of table (optional)
+//                 columns:[ //Define Table Columns
+//                     {title:"DN", field:"DN"},
+//                     {title:"NPS", field:"NPS"},
+//                     {title:"Hazard Value", field:"Hazard"},
+//                     {title:"tf [mm]", field:"tf"},
+//                     {title:"tm [mm]", field:"tm"},
+//                     {title:"tn [mm]", field:"tn"},
+//                     {title:"Schedule", field:"sch"},
+//                 ],
+//             });
+//             break
         
-        case 'Poly':
-            document.getElementById('results').innerHTML = `<div id="results-table"></div>`
+//         case 'Poly':
+//             document.getElementById('results').innerHTML = `<div id="results-table"></div>`
         
-            table = new Tabulator("#results-table", {
-                height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
-                data:tableData, //assign data to table
-                layout:"fitColumns", //fit columns to width of table (optional)
-                columns:[ //Define Table Columns
-                    {title:"DN", field:"DN"},
-                    {title:"t", field:"t"},
-                    {title:"SDR", field:"SDR"},
-                    {title:"PN", field:"PN"},
-                ],
-            });
-    }
-}
+//             table = new Tabulator("#results-table", {
+//                 height:700, // set height of table (in CSS or here), this enables the Virtual DOM and improves render speed dramatically (can be any valid css height value)
+//                 data:tableData, //assign data to table
+//                 layout:"fitColumns", //fit columns to width of table (optional)
+//                 columns:[ //Define Table Columns
+//                     {title:"DN", field:"DN"},
+//                     {title:"t", field:"t"},
+//                     {title:"SDR", field:"SDR"},
+//                     {title:"PN", field:"PN"},
+//                 ],
+//             });
+//     }
+// }
 
 
 
@@ -354,6 +449,58 @@ function selectInput(inputType) {
                     <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Corrosion and Erosion Allowance [mm]" data-bs-html="true" data-bs-content="Max. amount in millimeters that is allowed to be corroded or eroded">?</a>
                 </div> 
 
+            </div>
+        </div>`
+        popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
+        popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+            return new bootstrap.Popover(popoverTriggerEl)
+        })
+        break
+        }
+        case 'ASTM': {
+            document.getElementById('input-fields').innerHTML = `
+            <div class="row d-flex justify-content-center">
+
+            <div class="input-group mb-3 d-inline-flex align-items-center w-auto" > 
+                <label class="input-group-text pres-input-wallt" for="Pres-Units">Design Pressure</label>
+                <input type="number" step="0.01" class="form-control" max="99999999" min="0" id="Pres" style="max-width: 100px;">
+                <select class="form-select " id="Pres-units">
+                    <option value="0" selected>PSI</option>
+                    <option value="1">MPa</option>
+                    <option value="2">kPa</option>
+                    <option value="3">bar</option>
+                </select>
+            </div>
+            <div class="input-group mb-3 d-inline-flex align-items-center w-auto">
+                <span class="input-group-text">SE</span>
+                <input type="number" step="0.01" id="se" class="form-control" style="width: 115px;" value="15000">
+                <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Allowable Stress Value [PSI]" data-bs-html="true" data-bs-content="Allowable material stress value (S) times the quality factor (E) in PSI, from ASME B31.3 Table A-1. </br></br> 15.000 PSI for A281 Gr. A Carbon Steel at room temp.">?</a>
+            </div>
+            <div class="d-inline-flex align-items-center w-auto">
+                <button class="btn btn-primary mb-3" type="button" onclick="mainComputeASME()">Calculate</button>
+            </div>
+        </div>
+        <hr style="margin: -5px 0 10px 0;">
+        <div>
+            <div class="row d-flex justify-content-center">
+
+                <div class="input-group mb-3 d-inline-flex align-items-center w-auto">
+                    <span class="input-group-text input-factor">W</span>
+                    <input type="number" step="0.01" id="W" class="form-control form-factor" value="1">
+                    <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Weld Joint Strength Reduction Factor" data-bs-html="true" data-bs-content="<a href='./references/Weld reduction factor 302 3 5.pdf' target='_blank'>ASME 302.3.5(e)</a>.">?</a>
+                
+                </div>
+                <div class="input-group mb-3 d-inline-flex align-items-center w-auto">
+                    <span class="input-group-text input-factor">C</span>
+                    <input type="number" step="0.01" id="C" class="form-control form-factor" value="0.079">
+                    <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Corrosion and Mechanical Allowances [in]" data-bs-html="true" data-bs-content="Max. amount in inches that is allowed to be corroded or eroded + mechanical allowances such as reduction in diameter caused by screw threads.">?</a>
+                </div> 
+                <div class="input-group mb-3 d-inline-flex align-items-center w-auto">
+                    <span class="input-group-text input-factor">Y</span>
+                    <input type="number" step="0.01" id="Y" class="form-control form-factor" value="0.4">
+                    <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Material and Temp. Coefficient" data-bs-html="true" data-bs-content="<a href='./references/Y coeff.jpg' target='_blank'>Y Coefficient</a> from ASME B31.3. </br></br> 0.4 for ductile metals under 482°C or 900°F.">?</a>
+                    
+                </div> 
             </div>
         </div>`
         popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'))
