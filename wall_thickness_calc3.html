@@ -106,7 +106,22 @@
                                         <input type="number" step="0.01" id="G" class="form-control form-factor" value="2">
                                         <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Corrosion and Erosion Allowance [mm]" data-bs-html="true" data-bs-content="Max. amount in millimeters that is allowed to be corroded or eroded">?</a>
                                     </div> 
-    
+                                </div>
+                                <hr style="margin: -5px 0 10px 0;">
+                                <div class="row d-flex justify-content-center">
+                                    <span class="info-text">
+                                        Optional: Durand's or Cave's F<sub>L</sub> factor. Calculates minimum pumping velocity for slurries to avoid particles from falling out of suspension. F<sub>L</sub> factor can be obtained from <a href="./durand_calc.html" target="_blank">here</a>. <br>
+                                        Leave blank to skip this calculation. 
+                                    </span>
+                                    <div class="input-group mt-3 d-inline-flex align-items-center w-auto">
+                                        <span class="input-group-text">F<sub>L</sub></span>
+                                        <input type="number" step="0.01" id="fl" class="form-control form-factor" value="">
+                                    </div>
+                                    <div class="input-group mt-3 d-inline-flex align-items-center w-auto">
+                                        <span class="input-group-text">S</span>
+                                        <input type="number" step="0.01" id="S" class="form-control form-factor" value="">
+                                        <a tabindex="0" class="btn btn-outline-secondary" role="button" data-bs-placement="top" data-bs-toggle="popover" data-bs-trigger="focus" title="Corrosion and Erosion Allowance [mm]" data-bs-html="true" data-bs-content="Specific gravity (SG) of dry solids. </br> S = ρ/ρw.">?</a>
+                                    </div>
                                 </div>
                             </div>
                         </div>

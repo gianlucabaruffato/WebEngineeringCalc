@@ -407,6 +407,7 @@ function createChart(arrayMaxQ_L, units, xCurrent, yCurrent, maxPanValue) {
         type: 'line',
         data: data,
         options: {
+            aspectRatio: 1.75,
             scales: {
                 'y': {
                     display: true,
