@@ -1,5 +1,8 @@
 const jsonURL = 'https://api.npoint.io/52a0388ea949b5bd45eb'
 
+
+// try to get json from local server and if not, get from npoint
+
 async function fetchJson(jsonURL){
     let response = await fetch(jsonURL);
     dataJson = await response.json();
@@ -161,11 +164,11 @@ function mainComputeAS() {
         {title:"DN", field:"DN", maxWidth:'60'},
         {title:"NPS", field:"NPS", minWidth:'30', maxWidth:'75'},
         {title:"Hazard Value", field:"Hazard"},
-        {title:"tf [mm]", field:"tf", maxWidth:'90'},
-        {title:"tm [mm]", field:"tm", maxWidth:'90'},
-        {title:"tn [mm]", field:"tn", maxWidth:'90'},
-        {title:"Schedule", field:"sch", minWidth:'65'},
-        {title:"Min. V [m/s]", field:"V"},
+        {title:"tf [mm]", field:"tf", maxWidth:'90', headerTooltip:'tf [mm]: Wall thickness for design pressure alone.'},
+        {title:"tm [mm]", field:"tm", maxWidth:'90', headerTooltip:'tm [mm]: Wall thickness for design pressure considering corrosion and erosion allowance.'},
+        {title:"tn [mm]", field:"tn", maxWidth:'90', headerTooltip:'tn [mm]: Nominal wall thickness considering a tolerance factor of 12.5%.'},
+        {title:"Schedule", field:"sch", minWidth:'65', headerTooltip:'Pipe Schedule number. Indicates wall thickness for pipe diameter.'},
+        {title:"Min. V [m/s]", field:"V",headerTooltip:'Minimum velocity of fluid in [m/s] to avoid settling of solid particles.'},
     ]
 
     table.setColumns(columns)
@@ -260,15 +263,16 @@ function mainComputePOLIPLEX() {
 
     let columns = [
         {title:"DN", field:"DN"},
-        {title:"t [mm]", field:"t"},
-        {title:"SDR", field:"SDR"},
-        {title:"PN", field:"PN"},
-        {title:"Min. V [m/s]", field:"V"},
+        {title:"t [mm]", field:"t", headerTooltip:'t [mm]: Wall thickness for design pressure alone.'},
+        {title:"SDR", field:"SDR", headerTooltip:'Standard Dimension Ratio. Correlation between pipe size and thickness of pipe wall.'},
+        {title:"PN", field:"PN", headerTooltip:'PN: Nominal pressure that a pipe is rated for in bar.'},
+        {title:"Min. V [m/s]", field:"V", headerTooltip:'Minimum velocity of fluid in [m/s] to avoid settling of solid particles.'},
     ]
 
     table.setColumns(columns)
     table.setData(dataArray)
 }
+
 
 function mainComputeASME() {
     // Get pressure, read units and change to MPa
@@ -371,10 +375,10 @@ function mainComputeASME() {
     let columns = [
         {title:"DN", field:"DN"},
         {title:"NPS", field:"NPS"},
-        {title:"t [mm]", field:"t"},
-        {title:"tm [mm]", field:"tm"},
-        {title:"Schedule", field:"sch"},
-        {title:"Min. V [m/s]", field:"V"},
+        {title:"t [mm]", field:"t", headerTooltip:'t [mm]: Wall thickness for design pressure alone.'},
+        {title:"tm [mm]", field:"tm", headerTooltip:'tm [mm]: Wall thickness for design pressure including allowances.'},
+        {title:"Schedule", field:"sch", headerTooltip:'Pipe Schedule number. Indicates wall thickness for pipe diameter.'},
+        {title:"Min. V [m/s]", field:"V", headerTooltip:'Minimum velocity of fluid in [m/s] to avoid settling of solid particles.'},
     ]
 
     table.setColumns(columns)
@@ -398,7 +402,8 @@ var table = new Tabulator("#results-table", {
     data:tableData, //assign data to table
     layout:"fitColumns", 
     columnDefaults:{
-        resizable:"header"
+        resizable:"header",
+        headerTooltip:true,
     },
     columns:[ //Define Table Columns
         {title:"Input values to show results", field:"DN"},
