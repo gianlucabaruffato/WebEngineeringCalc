@@ -36,6 +36,10 @@
                                 </div>
                             </div>
                         </div>
+                        <hr style="margin-top: -5px;">
+                        <p class="info-text">Durand's curves should be used when 2% ≤ Cv ≤ 15%, and Cave's curves should be used when 5% ≤ Cv ≤ 30%</p>
+                        <hr>
+
 
                         <div class="input-group mb-3">
                             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
@@ -56,15 +60,38 @@
                                 <span class="input-group-text input-group-text-last">F<sub>L </sub></span>
                             </div>
                         </div>
+                        <hr>
+                        <p class="info-text">
+                            Optional: Specific gravity of solids in suspension (SG<sub>s</sub>). Input a value (SG<sub>s</sub> > 1) to 
+                            create a plot of minimum slurry velocity for pipe size.
+                        </p>
+                        <div class="d-flex justify-content-center input-group">
+                            <span class="input-group-text">SG<sub>s</sub></span>
+                            <input type="number" step="0.01" id="S" class="form-control form-factor" value="">
+                        </div>
                     </div>
                 </div>
-                <div>
-                    <canvas id="chart"></canvas>
-                    <div class="d-flex justify-content-center">
-                        <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="zoomInCurrent()">Zoom In Current</button>
-                        <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="restoreZoomInCurrent()">Restore Zoom</button>  
+                <div class="card card-special-table" id="results-card">
+                    <h5 class="card-header">Results</h5>
+                    <div class="card-body" style="padding: 0 0 0 0;">
+                        <div id="results">
+                            <p class="info-text" style="margin: 10px 0 10px 15px;">Fl Factor Graph</p>
+                            <div>
+                                <canvas id="chart"></canvas>
+                                <div class="d-flex justify-content-center">
+                                    <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="zoomInCurrent()">Zoom In Current</button>
+                                    <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="restoreZoomInCurrent()">Restore Zoom</button>  
+                                </div>
+                            </div>
+                            <hr>
+                            <p class="info-text" style="margin: 10px 0 10px 15px;">Minimum Slurry Velocity Graph (for STD. SCH.)</p>
+                            <div>
+                                <canvas id="chart_velocity"></canvas>
+                            </div>
+                        </div>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>        

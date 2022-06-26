@@ -12,6 +12,8 @@ async function displayJson(){
 
 displayJson()
 
+const g = 9.81
+
 function linealInterp(X1, Y1, X2, Y2, X) {
     const Y3 = Y1 + (X-X1)*(Y2-Y1)/(X2-X1);
     return parseFloat(Y3);
@@ -78,10 +80,6 @@ function mainCompute(factor) {
         }
     }
 
-    console.log(firstPairValuesDict)
-    console.log(secondPairValuesDict) 
-
-
     // Dictionary to array
 
     for (let index of dictIndexes) {
@@ -89,7 +87,7 @@ function mainCompute(factor) {
         secondPairValues.push(secondPairValuesDict[index])
     }
 
-    console.log(firstPairValues, secondPairValues) // Hasta aca OK
+    console.log(firstPairValues, secondPairValues) 
 
     // First interpolation with d50
 
@@ -111,7 +109,7 @@ function mainCompute(factor) {
 
             interpolatedFl = linealInterp(cvIndexArray[firstCvIndex], interpolatedArray1[firstCvIndex+1],
                 cvIndexArray[secondCvIndex], interpolatedArray1[secondCvIndex+1], cv)
-            
+                
             break
         }
     }
@@ -119,6 +117,7 @@ function mainCompute(factor) {
     document.getElementById('durand-result').innerHTML = interpolatedFl.toFixed(3)
     chartAddCurrent(d50, interpolatedFl)
     restoreZoomInCurrent()
+    slurryVelocityCalc(interpolatedFl)
 }
 
 
@@ -262,8 +261,6 @@ function changeInput(chartData, input) {
     interpolatedFl = 'a'
 }
 
-
-
 function chartAddCurrent(xCurrent, yCurrent) {
     let dict = {
         annotations: {
@@ -314,7 +311,6 @@ function chartClearCurrent() {
     chart.update()
 }
 
-
 function zoomInCurrent() {
     try {
         config.options.scales['x'].max = d50*1.35
@@ -349,3 +345,89 @@ function restoreZoomInCurrent() {
 
     chart.update()
 }
+
+function slurryVelocityCalc(Fl) {
+
+    let S = parseFloat(document.getElementById('S').value)
+
+    if (isNaN(S) || S <= 1) {
+        return
+    }
+
+    let vArray = []
+
+    for (let i = 0; i < dataJson.Tubing.length; i++) {
+        let ID_mm = dataJson.Tubing[i]['ID_mm']
+        let ID_m = ID_mm/1000
+        let V = Fl * Math.sqrt(2*g*ID_m*(S-1))
+        V = Math.round(V * 1e2) / 1e2
+        
+        vArray.push(V)
+    }
+
+    summonChart(vArray)
+}
+
+function createVelocityChart(arrayVelocity) {
+    // const labels = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
+    
+    const labels = [['DN 6', ' NPS 1/8'], ['DN 10', ' NPS 3/8'], ['DN 15',' NPS 1/2'], ['DN 20',' NPS 3/4'], ['DN 25',' NPS 1'], ['DN 32',' NPS 1 1/4'], 
+        ['DN 40',' NPS 1 1/2'], ['DN 50',' NPS 2'], ['DN 65',' NPS 2 1/2'], ['DN 80',' NPS 3'], ['DN 90',' NPS 3 1/2'], ['DN 100',' NPS 4'], ['DN 125',' NPS 5'], ['DN 150',' NPS 6'], ['DN 200',' NPS 8'],
+        ['DN 250',' NPS 10'], ['DN 300',' NPS 12'], ['DN 350',' NPS 14'], ['DN 400',' NPS 16'], 
+        ['DN 450',' NPS 18'], ['DN 500',' NPS 20'], ['DN 550',' NPS 22'], ['DN 600',' NPS 24'], ['DN 650',' NPS 26'], ['DN 700',' NPS 28'], ['DN 750',' NPS 30'], ['DN 800',' NPS 32'], ['DN 850',' NPS 34'], ['DN 900',' NPS 36'], ['DN 1050',' NPS 42']]
+    const data = {
+        labels: labels,
+        datasets: [{
+            label: 'Min. Flow Velocity for Slurry',
+            data: arrayVelocity,
+            borderColor: 'rgb(75, 192, 192)',
+            backgroundColor: 'rgba(75, 192, 192, 0.25)',
+            tension: 0.15,
+            fill: true,
+        }]
+    }
+    const config = {
+        type: 'line',
+        data: data,
+        options: {
+            aspectRatio: 1.75,
+            scales: {
+                'y': {
+                    display: true,
+                    title: {
+                        display: true,
+                        text: 'm/s',
+                        font: {
+                            size: 16,
+                            weight: 'bold',
+                        }
+                    }
+                }
+            },
+            plugins: {
+                tooltip: {
+                    enabled: true,
+                    callbacks: {
+                        label: function(tooltipItems) {
+                            return tooltipItems.parsed.y + ' m/s'
+                        }
+                    }
+                }
+            }
+        }
+    }
+    chart_velocity = new Chart(
+        document.getElementById('chart_velocity'),
+        config
+    )
+}
+
+function summonChart(vArray) {
+    let chartStatus = Chart.getChart("chart_velocity") 
+    if (chartStatus != undefined) {  //Destroys existing chart if it exists to draw new one
+        chartStatus.destroy()
+    }
+    createVelocityChart(vArray)
+}
+
+summonChart()

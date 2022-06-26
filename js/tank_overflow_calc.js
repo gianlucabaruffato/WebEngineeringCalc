@@ -382,7 +382,7 @@ function chartUnits(units, arrayMaxQ_L, xCurrent, yCurrent) { // Allows graph to
 function createChart(arrayMaxQ_L, units, xCurrent, yCurrent, maxPanValue) {
     // const labels = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
     
-    const labels = [['DN 6', ' NPS 1/4'], ['DN 10', ' NPS 3/8'], ['DN 15',' NPS 1/2'], ['DN 20',' NPS 3/4'], ['DN 25',' NPS 1'], ['DN 32',' NPS 1 1/4'], 
+    const labels = [['DN 6', ' NPS 1/8'], ['DN 10', ' NPS 3/8'], ['DN 15',' NPS 1/2'], ['DN 20',' NPS 3/4'], ['DN 25',' NPS 1'], ['DN 32',' NPS 1 1/4'], 
         ['DN 40',' NPS 1 1/2'], ['DN 50',' NPS 2'], ['DN 65',' NPS 2 1/2'], ['DN 80',' NPS 3'], ['DN 90',' NPS 3 1/2'], ['DN 100',' NPS 4'], ['DN 125',' NPS 5'], ['DN 150',' NPS 6'], ['DN 200',' NPS 8'],
         ['DN 250',' NPS 10'], ['DN 300',' NPS 12'], ['DN 350',' NPS 14'], ['DN 400',' NPS 16'], 
         ['DN 450',' NPS 18'], ['DN 500',' NPS 20'], ['DN 550',' NPS 22'], ['DN 600',' NPS 24'], ['DN 650',' NPS 26'], ['DN 700',' NPS 28'], ['DN 750',' NPS 30'], ['DN 800',' NPS 32'], ['DN 850',' NPS 34'], ['DN 900',' NPS 36'], ['DN 1050',' NPS 42']]
