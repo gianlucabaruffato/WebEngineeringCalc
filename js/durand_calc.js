@@ -19,6 +19,17 @@ function linealInterp(X1, Y1, X2, Y2, X) {
     return parseFloat(Y3);
 }
 
+function changeGraphName(factor) {
+    switch (factor) {
+        case 'durand':
+            document.getElementById('graph_name').innerHTML = "Durand's"
+            break
+        case 'cave':
+            document.getElementById('graph_name').innerHTML = "Cave's"
+            break
+    }
+}
+
 function mainCompute(factor) {
     d50 = parseFloat(document.getElementById('d50').value)
     let cv = parseFloat(document.getElementById('cv').value)
@@ -200,7 +211,7 @@ function createChart(inputData) {
                     display: true,
                     title: {
                         display: true,
-                        text: 'FL',
+                        text: 'Fₗ',
                         font: {
                             size: 16,
                             weight: 'bold',
@@ -224,7 +235,7 @@ function createChart(inputData) {
                     enabled: true,
                     callbacks: {
                         label: function(tooltipItems) {
-                            return tooltipItems.dataset.label +', ' + tooltipItems.parsed.y + ' FL'
+                            return tooltipItems.dataset.label +', ' + tooltipItems.parsed.y + ' Fₗ'
                         },
                         title: function(tooltipTitle) {
                             return 'd50 = ' + tooltipTitle[0].label + ' [μm]'
@@ -249,16 +260,18 @@ function changeInput(chartData, input) {
     switch(input) {
         case 'durand':
             document.getElementById('calculate-button').innerHTML = `<button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>`
+            changeGraphName('durand')
             break
         case 'cave':
             document.getElementById('calculate-button').innerHTML = `<button class="btn btn-primary" type="button" onclick="mainCompute('cave')">Calculate</button>`
+            changeGraphName('cave')
             break
     }
 
     restoreZoomInCurrent()
     chartClearCurrent()
     document.getElementById('durand-result').innerHTML = '-'
-    interpolatedFl = 'a'
+    interpolatedFl = 'a' // to trigger isNaN later
 }
 
 function chartAddCurrent(xCurrent, yCurrent) {
