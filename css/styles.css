@@ -175,3 +175,69 @@ input[type=number] {
 .popover {
     box-shadow: rgba(134, 134, 134, 0.507) 3px 3px 5px;
 }
+
+.pump_chart {
+    height: 400px !important;
+    width: 400px !important;
+}
+
+#chart {
+    margin-bottom: 0px;
+}
+
+#chart2 {
+    margin-left: -10px;
+    padding-right: 7px;
+    margin-bottom: -5px;
+}
+
+#chart3 {
+    margin-top: 2px;
+    margin-bottom: 0px;
+}
+
+#chart4 {
+    margin-left: -7px;
+    margin-top: -3px;
+    margin-right: -40px;
+    margin-bottom: 23px;
+}
+
+@media (max-width: 800px) {
+    .pump_chart {
+        height: 300px !important;
+        width: 300px !important;
+    }
+
+    #chart {
+        margin-top: -21px;
+    }
+
+    #chart2 {
+        margin-left: -8px;
+        padding-right: 7px;
+        margin-bottom: -5px;
+    }
+    
+    #chart3 {
+        margin-top: 3px;
+        margin-bottom: -20px;
+    }
+    
+    #chart4 {
+        margin-left: -7px;
+        margin-top: -2px;
+        margin-right: -40px;
+        margin-bottom: 23px;
+    }
+
+    .durand-input-text {
+        width: 200px;
+    }
+}
+
+@media (max-width: 400) {
+    .durand-input-text {
+        width: 100px;
+    }
+}

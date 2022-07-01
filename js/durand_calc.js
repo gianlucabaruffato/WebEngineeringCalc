@@ -201,7 +201,7 @@ const dataCave = {
 function createChart(inputData) {    
     const data = inputData
     
-    config = {
+    const config = {
         type: 'line',
         data: data,
         options: {
