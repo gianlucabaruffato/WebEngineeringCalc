@@ -41,18 +41,35 @@ function mainCompute() {
     let sNext
     let sPrev
 
+    if (S > 6 || S < 1.1) {
+        alert('SGs values out of range (1.1 ≥ S ≥ 6)')
+        return
+    }
+
+    if (d50 > 10 || d50 < 0.01) {
+        alert('d50 values out of range (0.01 ≥ d50 ≥ 10)')
+        return
+    }
+
+    if (d50 == 0.01) {
+        d50 = 0.01001   // to prevent edge case where algorithm cant find previous and next values
+    }
+
     // Get Next and Previous S to the one inputted
     for (let i = 0; i < sIndex.length; i++) {
-        if (sIndex[i] > S) {
+        if (sIndex[i] >= S) {
             sNext = sIndex[i]
             if (i == 0) {
-                sPrev = sIndex[i]
+                sPrev = '1.1'
+                sNext = '1.5'
             } else {
                 sPrev = sIndex[i-1]
             }
             break
         }
     }
+
+    console.log(sNext, sPrev)
 
     // Interpolate S values to the one inputted
     let sPrevValues = graph1[sPrev]
@@ -96,7 +113,7 @@ function mainCompute() {
 
     // console.log(sInterpolatedValues)
     // console.log(sNextSecondInterpolation, sPrevSecondInterpolation)
-    console.log('FINAL = ', graph1Result)
+    // console.log('FINAL = ', graph1Result)
 
     //////////////////////////
     //////// GRAPH 2 /////////
@@ -112,14 +129,21 @@ function mainCompute() {
     }
 
     let cvNext = cvIndexGraph2.find(element => element > cv)
-    let cvPrevIndex = cvIndexGraph2.indexOf(cvNext)-1
+
+    let cvPrevIndex
     let cvPrev
 
-    if (cvPrevIndex < 0) {
-        cvPrev = 5 // first cv in case input cv matches it
+    if (cvNext == undefined) {
+        cvNext = 50
+        cvPrev = 40
     } else {
+        cvPrevIndex = cvIndexGraph2.indexOf(cvNext)-1
         cvPrev = cvIndexGraph2[cvPrevIndex]
     }
+
+    
+
+
 
     // Interpolate values of known cv to input cv
 
@@ -145,7 +169,7 @@ function mainCompute() {
     let graph2Result = linealInterp(1, 0, interpY2, interpX2, graph1Result)
     
     // console.log(interpX2, interpY2)
-    console.log(graph2Result)
+    // console.log(graph2Result)
 
     //////////////////////////
     //////// GRAPH 3 /////////
@@ -193,7 +217,7 @@ function mainCompute() {
     let graph3Result = linealInterp(0, 1, interpX3, interpY3, graph2Result)
     
     // console.log(interpX3, interpY3)
-    console.log(graph3Result)
+    // console.log(graph3Result)
 
     //////////////////////////
     //////// GRAPH 4 /////////
@@ -211,11 +235,12 @@ function mainCompute() {
 
     if (cv >= 20) {
         cvNext4 = cvIndexGraph4.find(element => element > cv)
-        cvPrevIndex4 = cvIndexGraph4.indexOf(cvNext)-1
-    
-        if (cvPrevIndex4 < 0) {
-            cvPrev4 = 20 // first cv in case input cv matches it
+
+        if (cvNext4 == undefined) {
+            cvNext4 = 50
+            cvPrev4 = 40
         } else {
+            cvPrevIndex4 = cvIndexGraph4.indexOf(cvNext)-1
             cvPrev4 = cvIndexGraph2[cvPrevIndex]
         }
     } else {
@@ -223,8 +248,6 @@ function mainCompute() {
         cvPrev4 = 20
         cv = 20
     }
-
-
 
     // Interpolate values of known cv to input cv
 
@@ -239,11 +262,16 @@ function mainCompute() {
     let graph4ResultY = graph4Input
     let graph4ResultX = linealInterp(1, 1, interpY4, interpX4, graph4Input) 
 
+    if (graph4ResultX < 0.5 || graph4ResultY < 0.5) {
+        alert('Graph 3 results out of range for graph 4')
+        return
+    }
+
     graph4ResultX = graph4ResultX.toFixed(2)
     graph4ResultY = graph4ResultY.toFixed(2)
 
-    console.log(interpX4, interpY4)
-    console.log('HR',graph4ResultY,'ER', graph4ResultX)
+    // console.log(interpX4, interpY4)
+    // console.log('HR',graph4ResultY,'ER', graph4ResultX)
 
     document.getElementById('er-result').innerHTML = graph4ResultX
     document.getElementById('hr-result').innerHTML = graph4ResultY
@@ -661,7 +689,6 @@ const config1 = {
     type: 'line',
     data: data1,
     options: {
-
         responsive: true,
         maintainAspectRatio: false,
         elements: {
@@ -943,6 +970,13 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: 0,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
+                arrowHeads: {
+                    end: {
+                        enabled: true,
+                        fill: true,
+                        borderDash: []
+                    }
+                }
 
             },
             lineCurrentY: {
@@ -978,7 +1012,6 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: 0,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
-
             },
             lineCurrentY: {
                 type: 'line',
@@ -988,6 +1021,14 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: graph1Result,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
+                arrowHeads: {
+                    end: {
+                        enabled: true,
+                        fill: true,
+                        borderDash: []
+                    }
+                }
+
             },
             pointCurrent: {
                 type: 'point',
@@ -1013,6 +1054,14 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: 0,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
+                arrowHeads: {
+                    end: {
+                        enabled: true,
+                        fill: true,
+                        borderDash: []
+                    }
+                }
+
 
             },
             lineCurrentY: {
@@ -1048,6 +1097,14 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: graph4ResultY,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
+                arrowHeads: {
+                    end: {
+                        enabled: true,
+                        fill: true,
+                        borderDash: []
+                    }
+                }
+
 
             },
             lineCurrentY: {
@@ -1058,6 +1115,14 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 yMin: 1,
                 borderDash: [10,5],
                 borderColor: 'rgb(71, 71, 71)',
+                arrowHeads: {
+                    start: {
+                        enabled: true,
+                        fill: true,
+                        borderDash: []
+                    }
+                }
+
             },
             pointCurrent: {
                 type: 'point',
@@ -1162,7 +1227,7 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
             <input type="number" step="0.01" max="15" min="2" id="Di" class="form-control" value="400">
-            <span class="input-group-text ">%</span>
+            <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
             <div class="input-group mb-3" id="calculate-button">
@@ -1189,7 +1254,7 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
             <input type="number" step="0.01" max="15" min="2" id="Di" class="form-control" value="400">
-            <span class="input-group-text ">%</span>
+            <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
             <div class="input-group mb-3" id="calculate-button">
