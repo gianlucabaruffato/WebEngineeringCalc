@@ -69,8 +69,6 @@ function mainCompute() {
         }
     }
 
-    console.log(sNext, sPrev)
-
     // Interpolate S values to the one inputted
     let sPrevValues = graph1[sPrev]
     let sNextValues = graph1[sNext]
@@ -78,11 +76,6 @@ function mainCompute() {
 
     let sPrevSecondInterpolation
     let sNextSecondInterpolation
-
-    // console.log(sPrev, sNext)
-
-    // console.log(sPrevValues)
-    // console.log(sNextValues)
 
     for (let i = 0; i < graph1['5'].length; i++) {
         let yPrevValue = parseFloat(sPrevValues[i]['y'])
@@ -109,11 +102,6 @@ function mainCompute() {
         }
     }
 
-
-
-    // console.log(sInterpolatedValues)
-    // console.log(sNextSecondInterpolation, sPrevSecondInterpolation)
-    // console.log('FINAL = ', graph1Result)
 
     //////////////////////////
     //////// GRAPH 2 /////////
@@ -150,7 +138,7 @@ function mainCompute() {
     let cvPrevValues = graph2[cvPrev][0]
     let cvNextValues = graph2[cvNext][0]
 
-    // remember that all curves share (0, 1) point so only interpolate final point
+    // all curves share (0, 1) point so only interpolate final point
 
     let interpX2 = linealInterp(cvPrev, cvPrevValues['x'], cvNext, cvNextValues['x'], cv)
     let interpY2 = linealInterp(cvPrev, cvPrevValues['y'], cvNext, cvNextValues['y'], cv)
@@ -167,9 +155,7 @@ function mainCompute() {
     }
 
     let graph2Result = linealInterp(1, 0, interpY2, interpX2, graph1Result)
-    
-    // console.log(interpX2, interpY2)
-    // console.log(graph2Result)
+
 
     //////////////////////////
     //////// GRAPH 3 /////////
@@ -283,14 +269,14 @@ function mainCompute() {
 const chartAreaBorder = {
     id: 'chartAreaBorder',
     beforeDraw(chart, args, options) {
-      const {ctx, chartArea: {left, top, width, height}} = chart;
-      ctx.save();
-      ctx.strokeStyle = options.borderColor;
-      ctx.lineWidth = options.borderWidth;
-      ctx.setLineDash(options.borderDash || []);
-      ctx.lineDashOffset = options.borderDashOffset;
-      ctx.strokeRect(left, top, width, height);
-      ctx.restore();
+        const {ctx, chartArea: {left, top, width, height}} = chart;
+        ctx.save();
+        ctx.strokeStyle = options.borderColor;
+        ctx.lineWidth = options.borderWidth;
+        ctx.setLineDash(options.borderDash || []);
+        ctx.lineDashOffset = options.borderDashOffset;
+        ctx.strokeRect(left, top, width, height);
+        ctx.restore();
     }
 };
 
@@ -302,7 +288,7 @@ const colorArray3 = ['#006292', '#126b9a', '#1f75a2', '#2b7eaa', '#3787b2', '#42
 
 const data1 = {
     labels: [0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10],
- 
+
     datasets: [{
         label: '6',
         data: [0,0.07731958762886598,0.24570446735395188,0.33505154639175255,0.3951890034364261,0.436426116838488,0.5601374570446735,0.6529209621993127,0.6993127147766323,0.7285223367697594,0.7474226804123711,0.8041237113402062,0.8487972508591065,0.8711340206185567,0.8848797250859106,0.8934707903780068],
@@ -626,9 +612,9 @@ const data4 = {
     labels: [1, 0],
 
     datasets: [{
-        label: 'Cv 5%',
-        borderColor: '#14856b',
-        backgroundColor: '#14856b',
+        label: 'Cv ≤20%',
+        borderColor: '#006292',
+        backgroundColor: '#006292',
         data: [
             {
                 "x": 0.5,
@@ -640,9 +626,9 @@ const data4 = {
             }
         ]
     },{
-        label: 'Cv 10%',
-        borderColor: '#269a70',
-        backgroundColor: '#269a70',
+        label: 'Cv 30%',
+        borderColor: '#1f75a2',
+        backgroundColor: '#1f75a2',
         data: [
             {
                 "x": 0.5,
@@ -654,9 +640,9 @@ const data4 = {
             }
         ] 
     },{
-        label: 'Cv 15%',
-        borderColor: '#3cae76',
-        backgroundColor: '#3cae76',
+        label: 'Cv 40%',
+        borderColor: '#3787b2',
+        backgroundColor: '#3787b2',
         data: [
             {
                 "x": 0.5,
@@ -668,9 +654,9 @@ const data4 = {
             }
         ] 
     },{
-        label: '> Cv 20%',
-        borderColor: '#5bc17f',
-        backgroundColor: '#5bc17f',
+        label: 'Cv 50%',
+        borderColor: '#4f9ac0',
+        backgroundColor: '#4f9ac0',
         data: [
             {
                 "x": 0.5,
