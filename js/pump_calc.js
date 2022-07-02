@@ -202,9 +202,6 @@ function mainCompute() {
 
     let graph3Result = linealInterp(0, 1, interpX3, interpY3, graph2Result)
     
-    // console.log(interpX3, interpY3)
-    // console.log(graph3Result)
-
     //////////////////////////
     //////// GRAPH 4 /////////
     //////////////////////////
@@ -1129,14 +1126,12 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
                 borderColor: '#A2A2A2',
                 content: ['Results:',`HR: ${graph4ResultY}`,`ER: ${graph4ResultX}`],
                 font: {
-                  size: 18
+                    size: 18
                 }
-              }
+            }
 
         }
     }
-
-    
 
     chart2.config.options.plugins.annotation = dict2
     chart2.update()
@@ -1152,10 +1147,11 @@ function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
 
 }
 
+let prevWidth = 0
 
 function createCharts() {
 
-    if (screen.width > 600) {
+    if (screen.availWidth > 600 && prevWidth != screen.availWidth) {
 
         document.getElementById('chart_section').innerHTML = `
         <div class="d-flex flex-row pump_chart justify-content-center" style="margin: auto;">
@@ -1186,33 +1182,34 @@ function createCharts() {
             document.getElementById('chart4'),
             config4
         )
-    } else {
+
+
+    } else if(screen.availWidth <= 600) {
         document.getElementById('chart_section').innerHTML = `Please rotate your phone to display graphs (screen width too small).`
     }
-
 }
 
 function resizeInputs() {
-    if (screen.width > 800) {
+    if (screen.width > 800  && prevWidth != screen.availWidth) {
         document.getElementById('inputs').innerHTML = `
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
-            <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control" value="0.5">
+            <input type="number" step="0.01" max="10" min="0.01" id="d50" class="form-control" value="">
             <span class="input-group-text">mm</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
-            <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control" value="30">
+            <input type="number" step="0.01" max="50" min="5" id="cv" class="form-control" value="">
             <span class="input-group-text ">%</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Solids Specific Gravity (SG<sub>s)</span>
-            <input type="number" step="0.01" max="15" min="2" id="S" class="form-control" value="2.65">
+            <input type="number" step="0.01" max="6" min="1.1" id="S" class="form-control" value="">
             <span class="input-group-text ">%</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
-            <input type="number" step="0.01" max="15" min="2" id="Di" class="form-control" value="400">
+            <input type="number" step="0.01" id="Di" class="form-control" value="">
             <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
@@ -1220,26 +1217,28 @@ function resizeInputs() {
             <button class="btn btn-primary" type="button" onclick="mainCompute()">Calculate</button>
         </div>
         </div>`
-    } else {
+        prevWidth = screen.availWidth
+        console.log(prevWidth)
+    } else if (screen.width <= 800  && prevWidth != screen.availWidth){
         document.getElementById('inputs').innerHTML = `
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
-            <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control" value="0.5">
+            <input type="number" step="0.01" max="10" min="0.01" id="d50" class="form-control" value="">
             <span class="input-group-text">mm</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Vol. Concentration (Cv)</span>
-            <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control" value="30">
+            <input type="number" step="0.01" max="50" min="5" id="cv" class="form-control" value="">
             <span class="input-group-text ">%</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Solids Spec. Grav. (SG<sub>s)</span>
-            <input type="number" step="0.01" max="15" min="2" id="S" class="form-control" value="2.65">
+            <input type="number" step="0.01" max="6" min="1.1" id="S" class="form-control" value="">
             <span class="input-group-text ">%</span>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
-            <input type="number" step="0.01" max="15" min="2" id="Di" class="form-control" value="400">
+            <input type="number" step="0.01" id="Di" class="form-control" value="">
             <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
@@ -1247,6 +1246,7 @@ function resizeInputs() {
             <button class="btn btn-primary" type="button" onclick="mainCompute()">Calculate</button>
         </div>
         </div>`
+        prevWidth = screen.availWidth
     }
 }
 
@@ -1256,5 +1256,5 @@ resizeInputs()
 window.addEventListener('resize', function(event){
     createCharts()
     resizeInputs()
-  });
+})
 
