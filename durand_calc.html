@@ -33,6 +33,9 @@
                         
                                     <input type="radio" class="btn-check" name="btnradio" id="btnradio2" autocomplete="off" onclick="changeInput(dataCave, 'cave')">
                                     <label class="btn btn-outline-primary input-select-btn" for="btnradio2">Cave</label>
+
+                                    <input type="radio" class="btn-check" name="btnradio" id="btnradio3" autocomplete="off" onclick="changeInput(dataCave, 'wilson')">
+                                    <label class="btn btn-outline-primary input-select-btn" for="btnradio3">Wilson</label>
                                 </div>
                             </div>
                         </div>
@@ -40,34 +43,35 @@
                         <p class="info-text">Durand's curves should be used when 2% ≤ Cv ≤ 15%, and Cave's curves should be used when 5% ≤ Cv ≤ 30%</p>
                         <hr>
 
-
-                        <div class="input-group mb-3">
-                            <span class="input-group-text durand-input-text">Particle Size (d50)</span>
-                            <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
-                            <span class="input-group-text input-group-text-last">μm</span>
-                        </div>
-                        <div class="input-group mb-3">
-                            <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
-                            <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control">
-                            <span class="input-group-text ">%</span>
-                        </div>
-                        <div class="d-flex justify-content-between">
-                            <div class="input-group mb-3" id="calculate-button">
-                                <button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>
+                        <div id="input_fields">
+                            <div class="input-group mb-3">
+                                <span class="input-group-text durand-input-text">Particle Size (d50)</span>
+                                <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
+                                <span class="input-group-text input-group-text-last">μm</span>
                             </div>
-                            <div class="input-group mb-3"  style="width: 200px;">
-                                <span class="form-control durand-results" id="durand-result">-</span>
-                                <span class="input-group-text input-group-text-last">F<sub>L </sub></span>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
+                                <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control">
+                                <span class="input-group-text ">%</span>
                             </div>
-                        </div>
-                        <hr>
-                        <p class="info-text">
-                            Optional: Specific gravity of solids in suspension (SG<sub>s</sub>). Input a value (SG<sub>s</sub> > 1) to 
-                            create a plot of minimum slurry velocity for pipe size.
-                        </p>
-                        <div class="d-flex justify-content-center input-group">
-                            <span class="input-group-text">SG<sub>s</sub></span>
-                            <input type="number" step="0.01" id="S" class="form-control form-factor" value="">
+                            <div class="d-flex justify-content-between">
+                                <div class="input-group mb-3" id="calculate-button">
+                                    <button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>
+                                </div>
+                                <div class="input-group mb-3"  style="width: 200px;">
+                                    <span class="form-control durand-results" id="durand-result">-</span>
+                                    <span class="input-group-text input-group-text-last">F<sub>L </sub></span>
+                                </div>
+                            </div>
+                            <hr>
+                            <p class="info-text">
+                                Optional: Specific gravity of solids in suspension (SG<sub>s</sub>). Input a value (SG<sub>s</sub> > 1) to 
+                                create a plot of minimum slurry velocity for pipe size.
+                            </p>
+                            <div class="d-flex justify-content-center input-group">
+                                <span class="input-group-text">SG<sub>s</sub></span>
+                                <input type="number" step="0.01" id="S" class="form-control form-factor" value="">
+                            </div>
                         </div>
                     </div>
                 </div>

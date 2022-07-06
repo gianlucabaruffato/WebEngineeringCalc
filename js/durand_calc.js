@@ -19,6 +19,27 @@ function linealInterp(X1, Y1, X2, Y2, X) {
     return parseFloat(Y3);
 }
 
+function findSurrounding(value, array) {
+    let Next = array.find(element => element > value)
+    let NextIndex
+    let PrevIndex
+    let Prev
+
+
+    if (Next == undefined) {
+        Next = array[array.length]
+        Prev = array[array.length-1]
+        NextIndex = 19
+        PrevIndex = 18
+    } else {
+        NextIndex = array.indexOf(Next)
+        PrevIndex = array.indexOf(Next)-1
+        Prev = array[PrevIndex]
+    }
+
+    return [Prev, Next, PrevIndex, NextIndex]
+}
+
 function changeGraphName(factor) {
     switch (factor) {
         case 'durand':
@@ -132,6 +153,149 @@ function mainCompute(factor) {
 }
 
 
+
+// compute for Wilson's curves in separate function since methods are extremely different
+function wilsonCompute() {
+    const dArray = [0.1,0.11,0.12,0.13,0.14,0.15,0.16,0.17,0.18,0.19,0.2,0.22,0.24,0.26,0.28,0.3,0.32,0.34,0.36,0.38,0.4,0.45,0.5,0.6]
+    const graph1Array = [0.15, 0.16, 0.17, 0.18, 0.19, 0.2, 0.25, 0.3, 0.4, 0.6, 0.8, 1, 1.5, 2, 3, 4, 5, 6, 7, 8, 9, 10, 15, 20, 25, 30]
+    const graph2Array = [1.1, 1.2, 1.3, 1.4, 1.5, 1.6, 1.7, 1.8, 1.9, 2, 2.2, 2.4, 2.6, 2.8, 3, 3.5, 4, 4.5, 5, 5.5,6]
+    const resultArray = [0,0.097864769,0.179715302,0.25088968,0.31316726,0.364768683,0.411032028,0.453736655,0.489323843,0.523131673,0.551601423,0.604982206,0.645907473,0.679715302,0.709964413,0.736654804,0.790035587,0.830960854,0.862989324,0.889679715,0.927046263,0.955516014,0.973309609,0.987544484,1]
+
+    let d50 = parseFloat(document.getElementById('d50').value)/1000
+    let S = parseFloat(document.getElementById('S').value)
+
+    if (d50 > 30 || d50 < 0.15) {
+        alert('d50 values out of range (150 ≤ d50 ≤ 30000)')
+        return
+    }
+
+    if (S > 6 || S < 1.1) {
+        alert('SGs values out of range (1.1 ≤ SGs ≤ 6)')
+        return
+    }
+
+    //interpolate to get value al line break (x = 1)
+
+    let results1 = []
+    
+    // get index of next and prev d50
+    let d50Next = graph1Array.find(element => element > d50)
+    let d50NextIndex
+    let d50PrevIndex
+    let d50Prev
+
+    if (d50Next == undefined) {
+        d50Next = 30
+        d50Prev = 25
+        d50NextIndex = 23
+        d50PrevIndex = 22
+    } else {
+        d50NextIndex = graph1Array.indexOf(d50Next)
+        d50PrevIndex = graph1Array.indexOf(d50Next)-1
+        d50Prev = graph1Array[d50PrevIndex]
+    }
+
+    console.log(d50Next, d50Prev)
+    console.log(d50NextIndex, d50PrevIndex)
+
+    // get (x,y) for input d50 interpolating
+
+    let x = linealInterp(d50Prev, dataJson.wilson.graph1[d50PrevIndex]['x'], d50Next, dataJson.wilson.graph1[d50NextIndex]['x'], d50)
+    let y = linealInterp(d50Prev, dataJson.wilson.graph1[d50PrevIndex]['y'], d50Next, dataJson.wilson.graph1[d50NextIndex]['y'], d50)
+
+    console.log(x,y)
+
+    // for obtained d50 (point over graph 1) get Y value at X = 0
+
+    for (let i = 0; i < dArray.length; i++) {
+        let interpValue = linealInterp(0, dataJson.wilson.D[i]['y'], x, y, 1)
+        if (interpValue >= 1 || interpValue <= 0) {
+            results1.push(null)
+        } else {
+            
+            results1.push(interpValue)
+        }
+    }
+
+    console.log(results1)
+
+    // with results 1, do the same for graph 2 and get final results
+
+    let results2 = []
+
+    // get index of next and prev S
+    let sNext = graph2Array.find(element => element > S)
+    let sNextIndex
+    let sPrevIndex
+    let sPrev
+
+    if (sNext == undefined) {
+        sNext = 6
+        sPrev = 5.5
+        sNextIndex = 19
+        sPrevIndex = 18
+    } else {
+        sNextIndex = graph2Array.indexOf(sNext)
+        sPrevIndex = graph2Array.indexOf(sNext)-1
+        sPrev = graph2Array[sPrevIndex]
+    }
+
+    console.log(sNext, sPrev)
+    console.log(sNextIndex, sPrevIndex)
+
+    // get (x,y) for S interpolating
+
+    let x2 = linealInterp(sPrev, dataJson.wilson.graph2[sPrevIndex]['x'], sNext, dataJson.wilson.graph2[sNextIndex]['x'], S)
+    let y2 = linealInterp(sPrev, dataJson.wilson.graph2[sPrevIndex]['y'], sNext, dataJson.wilson.graph2[sNextIndex]['y'], S)
+
+    console.log(x2,y2)
+
+    let interpValue2
+
+    for (let i = 0; i < results1.length; i++) {
+        if (results1[i] != null) {
+            interpValue2 = linealInterp(0, results1[i], x2, y2, 1) 
+            results2.push(interpValue2)
+        } else {
+            results2.push(0)
+        }
+    }
+
+    console.log(results2)
+
+    let results3 = []
+
+    
+    
+    for (let i = 0; i < results2.length; i++) {
+        let [vPrev, vNext, vPrevIndex, vNextIndex] = findSurrounding(results2[i], resultArray)
+
+        console.log(vPrev, vPrevIndex, vNext, vNextIndex)
+
+        let finalValue = linealInterp(vPrev,
+        dataJson.wilson.result[vPrevIndex]['x'],
+        vNext,
+        dataJson.wilson.result[vNextIndex]['x'],
+        results2[i])
+        
+        finalValue = Math.round(finalValue * 1e3) / 1e3
+
+        results3.push(finalValue)
+    }
+
+    console.log('final', results3)
+    summonChart(results3, 'wilson')
+    config_velocity.options.scales.x.type = 'linear'
+    config_velocity.options.scales.x.title.text = 'Internal Diameter [mm]'
+    config_velocity.options.scales.x.title.display = true
+    config_velocity.options.scales.x.title.font = {
+        size: 16,
+        weight: 'bold',
+    }
+
+    chart_velocity.update()
+}
+
 const dataDurand = {
     labels: [10, 20, 40, 60, 80, 100, 200, 400, 600, 800, 1000, 2000],
     datasets: [{
@@ -201,7 +365,7 @@ const dataCave = {
 function createChart(inputData) {    
     const data = inputData
     
-    const config = {
+    config = {
         type: 'line',
         data: data,
         options: {
@@ -254,23 +418,134 @@ function createChart(inputData) {
 createChart(dataDurand)
 
 function changeInput(chartData, input) {
-    chart.data = chartData
-    chart.update()
+
+
+    if (input == 'durand' || input == 'cave') {
+        document.getElementById('input_fields').innerHTML = `
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Particle Size (d50)</span>
+            <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
+            <span class="input-group-text input-group-text-last">μm</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
+            <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control">
+            <span class="input-group-text ">%</span>
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="input-group mb-3" id="calculate-button">
+                <button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>
+            </div>
+            <div class="input-group mb-3"  style="width: 200px;">
+                <span class="form-control durand-results" id="durand-result">-</span>
+                <span class="input-group-text input-group-text-last">F<sub>L </sub></span>
+            </div>
+        </div>
+        <hr>
+        <p class="info-text">
+            Optional: Specific gravity of solids in suspension (SG<sub>s</sub>). Input a value (SG<sub>s</sub> > 1) to 
+            create a plot of minimum slurry velocity for pipe size.
+        </p>
+        <div class="d-flex justify-content-center input-group">
+            <span class="input-group-text">SG<sub>s</sub></span>
+            <input type="number" step="0.01" id="S" class="form-control form-factor" value="">
+        </div>
+        `    
+
+        document.getElementById('results').innerHTML = `
+        <p class="info-text" style="margin: 10px 0 10px 15px;">F<sub>L</sub> Factor Graph</p>
+        <div>
+            <canvas id="chart"></canvas>
+            <div class="d-flex justify-content-center">
+                <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="zoomInCurrent()">Zoom In Current</button>
+                <button type="button" class="btn btn-primary mt-2 zoom-btn" onclick="restoreZoomInCurrent()">Restore Zoom</button>  
+            </div>
+        </div>
+        <hr>
+        <p class="info-text" style="margin: 10px 0 10px 15px;">
+            <span id="graph_name">
+                Durand's 
+            </span>
+            Limiting Settling Velocity (for STD. SCH.)
+        </p>
+        <div>
+            <canvas id="chart_velocity"></canvas>
+        </div>
+        `
+        createChart(chartData)
+        chart.data = chartData
+        chart.update()
+        summonChart()
+
+    } else {
+        document.getElementById('input_fields').innerHTML = `
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Particle Size (d50)</span>
+            <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
+            <span class="input-group-text input-group-text-last">μm</span>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Solids Specific Gravity (SG<sub>s</sub>)</span>
+            <input type="number" step="0.01" id="S" class="form-control" value="">
+        </div>
+        <div class="d-flex justify-content-between">
+            <div class="input-group mb-3" id="calculate-button">
+                <button class="btn btn-primary" type="button" onclick="wilsonCompute()">Calculate</button>
+            </div>
+        </div>
+        `    
+
+        document.getElementById('results').innerHTML = `
+        <p class="info-text" style="margin: 10px 0 10px 15px;">
+        <span id="graph_name">
+            Wilson's 
+        </span>
+        Limiting Settling Velocity (for internal diameter).
+        </p>
+        <div>
+            <canvas id="chart_velocity"></canvas>
+        </div>`
+
+        summonChart(undefined, 'wilson')
+        config_velocity.options.scales.x.type = 'linear'
+        config_velocity.options.scales.x.max = 600
+        config_velocity.options.scales.x.min = 100
+        config_velocity.options.scales.x.title.text = 'Internal Diameter [mm]'
+        config_velocity.options.scales.x.title.display = true
+        config_velocity.options.scales.x.title.font = {
+            size: 16,
+            weight: 'bold',
+        }
+    
+        chart_velocity.update()
+    }
 
     switch(input) {
         case 'durand':
-            document.getElementById('calculate-button').innerHTML = `<button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>`
+            document.getElementById('calculate-button').innerHTML = `
+            <button class="btn btn-primary" type="button" onclick="mainCompute('durand')">Calculate</button>
+            `    
             changeGraphName('durand')
             break
         case 'cave':
-            document.getElementById('calculate-button').innerHTML = `<button class="btn btn-primary" type="button" onclick="mainCompute('cave')">Calculate</button>`
+            document.getElementById('calculate-button').innerHTML = `
+            <button class="btn btn-primary" type="button" onclick="mainCompute('cave')">Calculate</button>
+            `    
             changeGraphName('cave')
+            break
+        case 'wilson':
+            document.getElementById('calculate-button').innerHTML = `
+            <button class="btn btn-primary" type="button" onclick="wilsonCompute()">Calculate</button>
+            `    
             break
     }
 
     restoreZoomInCurrent()
     chartClearCurrent()
-    document.getElementById('durand-result').innerHTML = '-'
+    try {
+        document.getElementById('durand-result').innerHTML = '-'
+    } catch {}
+
     interpolatedFl = 'a' // to trigger isNaN later
 }
 
@@ -381,13 +656,11 @@ function slurryVelocityCalc(Fl) {
     summonChart(vArray)
 }
 
-function createVelocityChart(arrayVelocity) {
+let config_velocity = {}
+function createVelocityChart(arrayVelocity, labels) {
     // const labels = [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29]
     
-    const labels = [['DN 6', ' NPS 1/8'], ['DN 10', ' NPS 3/8'], ['DN 15',' NPS 1/2'], ['DN 20',' NPS 3/4'], ['DN 25',' NPS 1'], ['DN 32',' NPS 1 1/4'], 
-        ['DN 40',' NPS 1 1/2'], ['DN 50',' NPS 2'], ['DN 65',' NPS 2 1/2'], ['DN 80',' NPS 3'], ['DN 90',' NPS 3 1/2'], ['DN 100',' NPS 4'], ['DN 125',' NPS 5'], ['DN 150',' NPS 6'], ['DN 200',' NPS 8'],
-        ['DN 250',' NPS 10'], ['DN 300',' NPS 12'], ['DN 350',' NPS 14'], ['DN 400',' NPS 16'], 
-        ['DN 450',' NPS 18'], ['DN 500',' NPS 20'], ['DN 550',' NPS 22'], ['DN 600',' NPS 24'], ['DN 650',' NPS 26'], ['DN 700',' NPS 28'], ['DN 750',' NPS 30'], ['DN 800',' NPS 32'], ['DN 850',' NPS 34'], ['DN 900',' NPS 36'], ['DN 1050',' NPS 42']]
+
     const data = {
         labels: labels,
         datasets: [{
@@ -399,7 +672,7 @@ function createVelocityChart(arrayVelocity) {
             fill: true,
         }]
     }
-    const config = {
+    config_velocity = {
         type: 'line',
         data: data,
         options: {
@@ -431,16 +704,28 @@ function createVelocityChart(arrayVelocity) {
     }
     chart_velocity = new Chart(
         document.getElementById('chart_velocity'),
-        config
+        config_velocity
     )
 }
 
-function summonChart(vArray) {
+function summonChart(vArray, labels) {
+
+    if (labels == undefined) {
+        labels = [['DN 6', ' NPS 1/8'], ['DN 10', ' NPS 3/8'], ['DN 15',' NPS 1/2'], ['DN 20',' NPS 3/4'], ['DN 25',' NPS 1'], ['DN 32',' NPS 1 1/4'], 
+        ['DN 40',' NPS 1 1/2'], ['DN 50',' NPS 2'], ['DN 65',' NPS 2 1/2'], ['DN 80',' NPS 3'], ['DN 90',' NPS 3 1/2'], ['DN 100',' NPS 4'], ['DN 125',' NPS 5'], ['DN 150',' NPS 6'], ['DN 200',' NPS 8'],
+        ['DN 250',' NPS 10'], ['DN 300',' NPS 12'], ['DN 350',' NPS 14'], ['DN 400',' NPS 16'], 
+        ['DN 450',' NPS 18'], ['DN 500',' NPS 20'], ['DN 550',' NPS 22'], ['DN 600',' NPS 24'], ['DN 650',' NPS 26'], ['DN 700',' NPS 28'], ['DN 750',' NPS 30'], ['DN 800',' NPS 32'], ['DN 850',' NPS 34'], ['DN 900',' NPS 36'], ['DN 1050',' NPS 42']]
+    }
+
+    if (labels == 'wilson') {
+        labels = [100, 110, 120, 130, 140, 150, 160, 170, 180, 190, 200, 220, 240, 260, 280, 300, 320, 340, 360, 380, 400, 450, 500, 600]
+    }
+
     let chartStatus = Chart.getChart("chart_velocity") 
     if (chartStatus != undefined) {  //Destroys existing chart if it exists to draw new one
         chartStatus.destroy()
     }
-    createVelocityChart(vArray)
+    createVelocityChart(vArray, labels)
 }
 
 summonChart()
