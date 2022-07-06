@@ -406,7 +406,12 @@ function createChart(inputData) {
 
 createChart(dataDurand)
 
+let prevWidth = 0
+
 function changeInput(chartData, input) {
+
+    prevWidth = 1
+
 
 
     if (input == 'durand' || input == 'cave') {
@@ -421,7 +426,7 @@ function changeInput(chartData, input) {
             </select>
         </div>
         <div class="input-group mb-3">
-            <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
+            <span class="input-group-text durand-input-text" id="vol-input-text">Volume Concentration (Cv)</span>
             <input type="number" step="0.01" max="15" min="2" id="cv" class="form-control">
             <span class="input-group-text ">%</span>
         </div>
@@ -482,7 +487,7 @@ function changeInput(chartData, input) {
             </select>
         </div>
         <div class="input-group mb-3">
-            <span class="input-group-text durand-input-text">Solids Specific Gravity (SG<sub>s</sub>)</span>
+            <span class="input-group-text durand-input-text" id="solid-input-text">Solids Specific Gravity (SG<sub>s</sub>)</span>
             <input type="number" step="0.01" id="S" class="form-control" value="">
         </div>
         <div class="d-flex justify-content-between">
@@ -516,6 +521,8 @@ function changeInput(chartData, input) {
     
         chart_velocity.update()
     }
+
+    resizeInputs()
 
     switch(input) {
         case 'durand':
@@ -726,3 +733,35 @@ function summonChart(vArray, labels) {
 }
 
 summonChart()
+
+
+
+function resizeInputs() {
+    if (screen.width > 800  && prevWidth != screen.availWidth) {
+        try {
+            document.getElementById('vol-input-text').innerHTML = 'Volume Concentration (Cv)'
+        } catch {}
+
+        try {
+            document.getElementById('solid-input-text').innerHTML = 'Solids Specific Gravity (SG<sub>s</sub>)'
+        } catch {}
+
+        prevWidth = screen.availWidth
+    } else if (screen.width <= 800  && prevWidth != screen.availWidth){    
+        try { 
+            document.getElementById('vol-input-text').innerHTML = 'Vol. Concentration (Cv)'
+        } catch {}
+        try {
+            document.getElementById('solid-input-text').innerHTML = 'Solids Spec. Grav. (SG<sub>s</sub>)'
+        } catch {}
+
+        prevWidth = screen.availWidth
+        prevWidth = screen.availWidth
+    }
+}
+
+resizeInputs()
+
+window.addEventListener('resize', function(event){
+    resizeInputs()
+})
