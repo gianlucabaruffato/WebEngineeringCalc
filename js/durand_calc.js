@@ -27,10 +27,10 @@ function findSurrounding(value, array) {
 
 
     if (Next == undefined) {
-        Next = array[array.length]
-        Prev = array[array.length-1]
-        NextIndex = 19
-        PrevIndex = 18
+        Next = array[array.length-1]
+        Prev = array[array.length-2]
+        NextIndex = array.length-1
+        PrevIndex = array.length-2
     } else {
         NextIndex = array.indexOf(Next)
         PrevIndex = array.indexOf(Next)-1
@@ -58,6 +58,19 @@ function mainCompute(factor) {
     let cvIndexArray
     let dictIndexes
 
+    // transform d50 from input units to um
+    let d50UnitsValue = document.getElementById('d50-units').value
+    switch (d50UnitsValue) { 
+        case '0': // input um
+            break
+        case '1': // input mm
+            d50 = d50*1000
+            break
+        case '2': // input m
+            d50 = d50*1000*1000
+            break
+    }
+
     switch(factor) {
         case 'durand':
             if (cv < 2 || cv > 15) {
@@ -65,7 +78,7 @@ function mainCompute(factor) {
                 return
             }
             if (d50 < 10 || d50 > 2000) {
-                alert ('ERROR: d50 values out of range (10 ≤ d50 ≤ 2000)')
+                alert ('ERROR: d50 values out of range (10 μm ≤ d50 ≤ 2000 μm)')
                 return
             }
             dataArray = dataJson.durand
@@ -78,7 +91,7 @@ function mainCompute(factor) {
                 return
             }
             if (d50 < 10 || d50 > 3000) {
-                alert ('ERROR: d50 values out of range (10 ≤ d50 ≤ 3000)')
+                alert ('ERROR: d50 values out of range (10 μm ≤ d50 ≤ 3000 μm)')
                 return
             }
             dataArray = dataJson.cave
@@ -164,8 +177,21 @@ function wilsonCompute() {
     let d50 = parseFloat(document.getElementById('d50').value)/1000
     let S = parseFloat(document.getElementById('S').value)
 
+    // transform d50 from input units to um
+    let d50UnitsValue = document.getElementById('d50-units').value
+    switch (d50UnitsValue) { 
+        case '0': // input um
+            break
+        case '1': // input mm
+            d50 = d50*1000
+            break
+        case '2': // input m
+            d50 = d50*1000*1000
+            break
+    }
+
     if (d50 > 30 || d50 < 0.15) {
-        alert('d50 values out of range (150 ≤ d50 ≤ 30000)')
+        alert('d50 values out of range (150 μm ≤ d50 ≤ 30000 μm)')
         return
     }
 
@@ -179,31 +205,14 @@ function wilsonCompute() {
     let results1 = []
     
     // get index of next and prev d50
-    let d50Next = graph1Array.find(element => element > d50)
-    let d50NextIndex
-    let d50PrevIndex
-    let d50Prev
 
-    if (d50Next == undefined) {
-        d50Next = 30
-        d50Prev = 25
-        d50NextIndex = 23
-        d50PrevIndex = 22
-    } else {
-        d50NextIndex = graph1Array.indexOf(d50Next)
-        d50PrevIndex = graph1Array.indexOf(d50Next)-1
-        d50Prev = graph1Array[d50PrevIndex]
-    }
 
-    console.log(d50Next, d50Prev)
-    console.log(d50NextIndex, d50PrevIndex)
+    let [d50Prev, d50Next, d50PrevIndex, d50NextIndex] = findSurrounding(d50, graph1Array)
 
     // get (x,y) for input d50 interpolating
 
     let x = linealInterp(d50Prev, dataJson.wilson.graph1[d50PrevIndex]['x'], d50Next, dataJson.wilson.graph1[d50NextIndex]['x'], d50)
     let y = linealInterp(d50Prev, dataJson.wilson.graph1[d50PrevIndex]['y'], d50Next, dataJson.wilson.graph1[d50NextIndex]['y'], d50)
-
-    console.log(x,y)
 
     // for obtained d50 (point over graph 1) get Y value at X = 0
 
@@ -212,65 +221,42 @@ function wilsonCompute() {
         if (interpValue >= 1 || interpValue <= 0) {
             results1.push(null)
         } else {
-            
             results1.push(interpValue)
         }
     }
-
-    console.log(results1)
 
     // with results 1, do the same for graph 2 and get final results
 
     let results2 = []
 
     // get index of next and prev S
-    let sNext = graph2Array.find(element => element > S)
-    let sNextIndex
-    let sPrevIndex
-    let sPrev
 
-    if (sNext == undefined) {
-        sNext = 6
-        sPrev = 5.5
-        sNextIndex = 19
-        sPrevIndex = 18
-    } else {
-        sNextIndex = graph2Array.indexOf(sNext)
-        sPrevIndex = graph2Array.indexOf(sNext)-1
-        sPrev = graph2Array[sPrevIndex]
-    }
-
-    console.log(sNext, sPrev)
-    console.log(sNextIndex, sPrevIndex)
+    let [sPrev, sNext, sPrevIndex, sNextIndex] = findSurrounding(S, graph2Array)
 
     // get (x,y) for S interpolating
 
     let x2 = linealInterp(sPrev, dataJson.wilson.graph2[sPrevIndex]['x'], sNext, dataJson.wilson.graph2[sNextIndex]['x'], S)
     let y2 = linealInterp(sPrev, dataJson.wilson.graph2[sPrevIndex]['y'], sNext, dataJson.wilson.graph2[sNextIndex]['y'], S)
 
-    console.log(x2,y2)
-
     let interpValue2
 
     for (let i = 0; i < results1.length; i++) {
         if (results1[i] != null) {
-            interpValue2 = linealInterp(0, results1[i], x2, y2, 1) 
-            results2.push(interpValue2)
+            interpValue2 = linealInterp(0, results1[i], x2, y2, 1)
+            if (interpValue2 < 0 || interpValue2 > 1) {
+                results2.push(null)
+            } else {
+                results2.push(interpValue2)
+            }
         } else {
-            results2.push(0)
+            results2.push(null)
         }
     }
 
-    console.log(results2)
-
     let results3 = []
 
-    
-    
     for (let i = 0; i < results2.length; i++) {
         let [vPrev, vNext, vPrevIndex, vNextIndex] = findSurrounding(results2[i], resultArray)
-
-        console.log(vPrev, vPrevIndex, vNext, vNextIndex)
 
         let finalValue = linealInterp(vPrev,
         dataJson.wilson.result[vPrevIndex]['x'],
@@ -278,12 +264,15 @@ function wilsonCompute() {
         dataJson.wilson.result[vNextIndex]['x'],
         results2[i])
         
-        finalValue = Math.round(finalValue * 1e3) / 1e3
+        if (finalValue == 1) {
+            results3.push(null)
+        } else {
+            finalValue = Math.round(finalValue * 1e3) / 1e3
+            results3.push(finalValue)
+        }
 
-        results3.push(finalValue)
     }
 
-    console.log('final', results3)
     summonChart(results3, 'wilson')
     config_velocity.options.scales.x.type = 'linear'
     config_velocity.options.scales.x.title.text = 'Internal Diameter [mm]'
@@ -425,7 +414,11 @@ function changeInput(chartData, input) {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
             <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
-            <span class="input-group-text input-group-text-last">μm</span>
+            <select class="form-select unit-dropdown" id="d50-units">
+                <option value="0" selected>μm</option>
+                <option value="1">mm</option>
+                <option value="2">m</option>
+            </select>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
@@ -482,7 +475,11 @@ function changeInput(chartData, input) {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
             <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
-            <span class="input-group-text input-group-text-last">μm</span>
+            <select class="form-select unit-dropdown" id="d50-units">
+                <option value="0" selected>μm</option>
+                <option value="1">mm</option>
+                <option value="2">m</option>
+            </select>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Solids Specific Gravity (SG<sub>s</sub>)</span>

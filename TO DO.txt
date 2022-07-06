@@ -1,1 +1,2 @@
 - Toggle zoom
+- cambiar lo q aparece como texto cuando pones el puntero donde van los numeros

@@ -47,7 +47,11 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text durand-input-text">Particle Size (d50)</span>
                                 <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
-                                <span class="input-group-text input-group-text-last">μm</span>
+                                <select class="form-select unit-dropdown" id="d50-units">
+                                    <option value="0" selected>μm</option>
+                                    <option value="1">mm</option>
+                                    <option value="2">m</option>
+                                </select>
                             </div>
                             <div class="input-group mb-3">
                                 <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>

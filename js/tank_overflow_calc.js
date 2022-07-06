@@ -18,7 +18,7 @@ function diameterInputType(type) {
     if (type == 'DN') {
         document.getElementById('diameter-input').innerHTML = `
         <div class="input-group mb-3">
-            <label class="input-group-text" for="D" style="width: 147px;">Choose</label>
+            <label class="input-group-text" for="D" style="width: 110px;">Choose</label>
             <input type="radio" class="btn-check" name="DN-NPS-toggle" id="DN-toggle" autocomplete="off" checked onclick="diameterInputType('DN')">
             <label class="btn btn-outline-secondary" for="DN-toggle">DN</label>
         
@@ -62,7 +62,7 @@ function diameterInputType(type) {
     } else {
         document.getElementById('diameter-input').innerHTML = `
         <div class="input-group mb-3">
-            <label class="input-group-text" for="D" style="width: 147px;">Choose</label>
+            <label class="input-group-text" for="D" style="width: 110px;">Choose</label>
             <input type="radio" class="btn-check" name="DN-NPS-toggle" id="DN-toggle" autocomplete="off" onclick="diameterInputType('DN')">
             <label class="btn btn-outline-secondary" for="DN-toggle">DN</label>
         

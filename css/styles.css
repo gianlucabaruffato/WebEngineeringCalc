@@ -203,6 +203,10 @@ input[type=number] {
     margin-bottom: 23px;
 }
 
+.unit-dropdown {
+    max-width: 90px;
+}
+
 @media (max-width: 800px) {
     .pump_chart {
         height: 300px !important;
@@ -241,3 +245,4 @@ input[type=number] {
         width: 100px;
     }
 }
+

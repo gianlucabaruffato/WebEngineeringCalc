@@ -38,16 +38,29 @@ function mainCompute() {
     let S = parseFloat(document.getElementById('S').value)
     let d50 = parseFloat(document.getElementById('d50').value)
 
+    // transform d50 from input units to mm
+    let d50UnitsValue = document.getElementById('d50-units').value
+    switch (d50UnitsValue) { 
+        case '0': // input um
+            d50 = d50/1000
+            break
+        case '1': // input mm
+            break
+        case '2': // input m
+            d50 = d50*1000
+            break
+    }
+
     let sNext
     let sPrev
 
-    if (S > 6 || S < 1.1) {
+    if (S > 6 || S < 1.1  || isNaN(S)) {
         alert('SGs values out of range (1.1 ≥ S ≥ 6)')
         return
     }
 
-    if (d50 > 10 || d50 < 0.01) {
-        alert('d50 values out of range (0.01 ≥ d50 ≥ 10)')
+    if (d50 > 10 || d50 < 0.01 || isNaN(d50)) {
+        alert('d50 values out of range (0.01 mm ≥ d50 ≥ 10 mm)')
         return
     }
 
@@ -129,10 +142,6 @@ function mainCompute() {
         cvPrev = cvIndexGraph2[cvPrevIndex]
     }
 
-    
-
-
-
     // Interpolate values of known cv to input cv
 
     let cvPrevValues = graph2[cvPrev][0]
@@ -142,8 +151,6 @@ function mainCompute() {
 
     let interpX2 = linealInterp(cvPrev, cvPrevValues['x'], cvNext, cvNextValues['x'], cv)
     let interpY2 = linealInterp(cvPrev, cvPrevValues['y'], cvNext, cvNextValues['y'], cv)
-
-
 
     // from graph 1 result (y) get value of graph 2 result (x)
     
@@ -164,10 +171,24 @@ function mainCompute() {
     const indexGraph3 = [0.0001, 0.0002, 0.0003, 0.0004, 0.0006, 0.0008, 0.001, 0.002, 0.004, 0.008, 0.016]
 
     let Di = parseFloat(document.getElementById('Di').value)
+    
+    // transform Di from input units to mm
+    let diUnitsValue = document.getElementById('di-units').value
+    switch (diUnitsValue) { 
+        case '0': // input um
+            Di = Di/1000
+            break
+        case '1': // input mm
+            break
+        case '2': // input m
+            Di = Di*1000
+            break
+    }
+
     let dD = d50/Di     // Particle to impeller ratio
 
     if (dD > 0.016 || dD < 0.0001 || isNaN(dD)) {
-        alert('Particle to impeller ratio out of range (0.0001 < d50/Di < 0.016)')
+        alert('Particle to impeller ratio out of range (0.0001< d50/Di < 0.016)')
         return
     }
 
@@ -277,11 +298,7 @@ const chartAreaBorder = {
     }
 };
 
-
-
 const colorArray3 = ['#006292', '#126b9a', '#1f75a2', '#2b7eaa', '#3787b2', '#4291b9', '#4f9ac0', '#5ca4c5', '#6badca', '#7bb6cd', '#8fbfcc', '#c3c3a5']
-
-
 
 const data1 = {
     labels: [0.01, 0.02, 0.04, 0.06, 0.08, 0.1, 0.2, 0.4, 0.6, 0.8, 1, 2, 4, 6, 8, 10],
@@ -805,7 +822,6 @@ const config2 = {
     plugins: [chartAreaBorder],
 }
 
-
 const config3 = {
     type: 'scatter',
     data: data3,
@@ -870,7 +886,6 @@ const config3 = {
     },
     plugins: [chartAreaBorder],
 }
-
 
 const config4 = {
     type: 'scatter',
@@ -939,7 +954,6 @@ const config4 = {
     },
     plugins: [chartAreaBorder],
 }
-
 
 function chartsAddCurrents(d50, graph1Result, graph2Result, graph3Result,
     graph4ResultY, graph4ResultX) {
@@ -1195,7 +1209,20 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
             <input type="number" step="0.01" max="10" min="0.01" id="d50" class="form-control" value="">
-            <span class="input-group-text">mm</span>
+            <select class="form-select unit-dropdown" id="d50-units">
+                <option value="0">μm</option>
+                <option value="1" selected>mm</option>
+                <option value="2">m</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
+            <input type="number" step="0.01" id="Di" class="form-control" value="">
+            <select class="form-select unit-dropdown" id="di-units">
+                <option value="0">μm</option>
+                <option value="1" selected>mm</option>
+                <option value="2">m</option>
+            </select>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
@@ -1205,12 +1232,6 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Solids Specific Gravity (SG<sub>s)</span>
             <input type="number" step="0.01" max="6" min="1.1" id="S" class="form-control" value="">
-            <span class="input-group-text ">%</span>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
-            <input type="number" step="0.01" id="Di" class="form-control" value="">
-            <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
             <div class="input-group mb-3" id="calculate-button">
@@ -1224,7 +1245,20 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Particle Size (d50)</span>
             <input type="number" step="0.01" max="10" min="0.01" id="d50" class="form-control" value="">
-            <span class="input-group-text">mm</span>
+            <select class="form-select unit-dropdown" id="d50-units">
+                <option value="0">μm</option>
+                <option value="1" selected>mm</option>
+                <option value="2">m</option>
+            </select>
+        </div>
+        <div class="input-group mb-3">
+            <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
+            <input type="number" step="0.01" id="Di" class="form-control" value="">
+            <select class="form-select unit-dropdown" id="di-units">
+                <option value="0">μm</option>
+                <option value="1" selected>mm</option>
+                <option value="2">m</option>
+            </select>
         </div>
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Vol. Concentration (Cv)</span>
@@ -1234,12 +1268,6 @@ function resizeInputs() {
         <div class="input-group mb-3">
             <span class="input-group-text durand-input-text">Solids Spec. Grav. (SG<sub>s)</span>
             <input type="number" step="0.01" max="6" min="1.1" id="S" class="form-control" value="">
-            <span class="input-group-text ">%</span>
-        </div>
-        <div class="input-group mb-3">
-            <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
-            <input type="number" step="0.01" id="Di" class="form-control" value="">
-            <span class="input-group-text ">mm</span>
         </div>
         <div class="d-flex justify-content-between">
             <div class="input-group mb-3" id="calculate-button">
