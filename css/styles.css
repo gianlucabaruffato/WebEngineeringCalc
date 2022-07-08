@@ -72,6 +72,11 @@ input[type=number] {
     width: 240px;
 }
 
+.input-text-last-PL {
+    width: 43px;
+    padding-left: 6px;
+}
+
 .durand-results {
     text-align: right;
 }
@@ -246,3 +251,17 @@ input[type=number] {
     }
 }
 
+#s-text, #sw-text, #sm-text, #cw-text, #cv-text {
+    -moz-transition:background-color .3s ease-in;
+    -o-transition:background-color .3s ease-in;
+    -webkit-transition:background-color .3s ease-in;
+    transition:background-color .3s ease-in;
+}
+
+.animation-class{
+    background-color:rgba(109, 223, 128, 0.534);
+}
+
+.pres-loss-results {
+    width: 210px; 
+}
