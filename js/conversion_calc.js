@@ -89,7 +89,7 @@ function mainCompute() {
             sm = sw*(cv-1)/(cw-1)
         }
 
-        replaceResults(sm, 'Sm', 'Sm-text')
+        replaceResults(sm, 'Sm', 'sm-text')
     }
 
     if (cwBlank) { // not returning %
@@ -105,7 +105,7 @@ function mainCompute() {
             cw = 1+sw*(cv-1)/sm
         }
 
-        replaceResults(cw, 'Cw', 'cw-text')
+        replaceResults(cw*100, 'Cw', 'cw-text')
     }
 
     if (cvBlank) { // not returning %
@@ -121,7 +121,7 @@ function mainCompute() {
             cv = 1+sm*(cw-1)/sw
         }
 
-        replaceResults(cv, 'Cv', 'cv-text')
+        replaceResults(cv*100, 'Cv', 'cv-text')
     }
 }
 
