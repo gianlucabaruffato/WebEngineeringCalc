@@ -46,6 +46,8 @@ function mainCompute() {
     v = v*3.281
     vs = vs*3.281
 
+    let parameter = 67*((g*di*(s-1))**0.5/v)**3*(vs/(g*(s-1)*d50)**0.5)**1.5
+
     let slurryPres = i*(1+parameter*cv)
 
     console.log(slurryPres)
