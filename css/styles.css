@@ -77,6 +77,11 @@ input[type=number] {
     padding-left: 6px;
 }
 
+.input-text-last-conversion {
+    width: 52px;
+    padding-left: 8px;
+}
+
 .durand-results {
     text-align: right;
 }
@@ -157,7 +162,13 @@ input[type=number] {
     border-top-right-radius: 0 !important;
     border-bottom-left-radius: 0 !important;
     background-color: #1871b9;
-    
+}
+
+.btn-outline-primary.standalone-btn{
+    border-top-left-radius: 15px !important;
+    border-bottom-right-radius: 15px !important;
+    border-top-right-radius: 0 !important;
+    border-bottom-left-radius: 0 !important;
 }
 
 .btn-check:active+.btn, .btn-check:checked+.btn, .btn.active, .btn.show, .btn:active {
@@ -251,7 +262,7 @@ input[type=number] {
     }
 }
 
-#s-text, #sw-text, #sm-text, #cw-text, #cv-text {
+#s-text, #sw-text, #sm-text, #cw-text, #cv-text, #vfr-text, #mfr-text {
     -moz-transition:background-color .3s ease-in;
     -o-transition:background-color .3s ease-in;
     -webkit-transition:background-color .3s ease-in;

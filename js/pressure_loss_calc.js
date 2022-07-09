@@ -47,15 +47,15 @@ function mainCompute() {
     vs = vs*3.281
 
     let parameter = 67*((g*di*(s-1))**0.5/v)**3*(vs/(g*(s-1)*d50)**0.5)**1.5
-
     let slurryPres = i*(1+parameter*cv)
+    let vo = 3.22*(g*(s-1))**0.25*cv**0.33*(di*vs)**0.5*d50**(-0.25) // ft/s
+    vo = vo/3.281
 
-    console.log(slurryPres)
-
-    replaceResults(parameter, slurryPres)
+    replaceResults(parameter, slurryPres, vo)
 }
 
-function replaceResults(parameter, slurryPres) {
-    document.getElementById('pres-parameter').innerHTML = parameter.toFixed(2)
-    document.getElementById('slurry-pres').innerHTML = slurryPres.toFixed(2)
+function replaceResults(parameter, slurryPres, vo) {
+    document.getElementById('pres-parameter').innerHTML = parameter.toFixed(3)
+    document.getElementById('slurry-pres').innerHTML = slurryPres.toFixed(3)
+    document.getElementById('vo').innerHTML = vo.toFixed(3)
 }

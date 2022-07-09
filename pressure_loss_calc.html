@@ -6,12 +6,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pressure Loss</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/lodash.js/4.17.11/lodash.min.js"></script>
-    
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="js/hammer.min.js"></script>
-    <script src="js/chartjs-plugin-zoom.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/chartjs-plugin-annotation/1.4.0/chartjs-plugin-annotation.js" integrity="sha512-es3XL5vwq08UWKA+Fp6tZVTcJ4Kh25GsgsCSkBbPlX6QmDn3YJX0yhUVhPYQUoPX/gUFXf7uH0YtuZHGPj4iHA==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="body">
@@ -76,7 +70,7 @@
                         <hr>
                         <p class="info-text">
                             Notes: <br>
-                            -Settling velocity (Vs) can be obtained from the last graph <a href="./durand_calc.html" target="_blank">here</a> or from lab tests. <br>
+                            -Settling velocity (Vs) to be obtained from laboratory tests. <br>
                             -Liquid pressure loss (i) represents pressure loss by friction of liquid alone, per unit of length of pipe. Can be obtained from Darcy's formula.
                         </p>
                     </div>
@@ -92,6 +86,11 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text pres-loss-results">Slurry Pressure Loss (i<sub>m</sub>)</span>
                                 <span class="form-control" id="slurry-pres">-</span>
+                            </div>
+                            <div class="input-group mb-3">
+                                <span class="input-group-text pres-loss-results">Optimal velocity (V<sub>o</sub>)</span>
+                                <span class="form-control" id="vo">-</span>
+                                <span class="input-group-text input-text-last-PL">m/s</span>
                             </div>
                         </div>
                     </div>

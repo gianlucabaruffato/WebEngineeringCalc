@@ -125,6 +125,47 @@ function mainCompute() {
     }
 }
 
+function vtmCompute () {
+    for (let spanId of greenFields) {
+        document.getElementById(spanId).classList.remove("animation-class")
+    }
+
+    let s = parseFloat(document.getElementById('S').value)
+    let sm = parseFloat(document.getElementById('Sm').value)
+    let cw = parseFloat(document.getElementById('Cw').value)/100
+    let cv = parseFloat(document.getElementById('Cv').value)/100
+    let vfr = parseFloat(document.getElementById('vfr').value)
+    let mfr = parseFloat(document.getElementById('mfr').value)*1000
+
+    let roS = s*1000
+    let roSm = sm*1000
+
+    let vfrBlank = false
+    let mfrBlank = false
+    if (isNaN(vfr)) {vfrBlank = true}
+    if (isNaN(mfr)) {mfrBlank = true}
+
+    if (vfrBlank && mfrBlank) {
+        alert('Please complete only one of the fields to continue.')
+        return
+    }
+
+    if (vfrBlank==false && mfrBlank==false) {
+        alert('Please complete only one of the fields to continue.')
+        return
+    }
+
+    // compute VFR
+    if (vfrBlank) {
+        vfr = (mfr/cw)/roSm
+        replaceResults(vfr, 'vfr', 'vfr-text')
+    } else { // mfrBlank true
+        mfr = vfr*cv*roS
+        mfr = mfr/1000 // from kg to tn
+        replaceResults(mfr, 'mfr', 'mfr-text')
+    }   
+}
+
 function replaceResults(result, valueId, spanId) {
 
     if (isNaN(result)) {
@@ -132,10 +173,30 @@ function replaceResults(result, valueId, spanId) {
         return
     }
     
-    document.getElementById(valueId).value = (result).toFixed(3)
+    document.getElementById(valueId).value = Math.round(result*1e3)/1e3
     document.getElementById(spanId).classList.add("animation-class")
 
     calculationDone = true
     greenFields.push(spanId)
     // setTimeout(() => {  document.getElementById(spanId).classList.remove("animation-class") }, 1000);
+}
+
+function clearResults(section) {
+    for (let spanId of greenFields) {
+        document.getElementById(spanId).classList.remove("animation-class")
+    }
+
+    switch (section) {
+        case '1':
+            document.getElementById('Sw').value = ''
+            document.getElementById('S').value = ''
+            document.getElementById('Sm').value = ''
+            document.getElementById('Cw').value = ''
+            document.getElementById('Cv').value = ''
+            break
+        case '2':
+            document.getElementById('vfr').value = ''
+            document.getElementById('mfr').value = ''
+    }
+
 }
