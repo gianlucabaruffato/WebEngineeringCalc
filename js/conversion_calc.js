@@ -33,12 +33,12 @@ function mainCompute() {
     if (isNaN(cv)) {cvBlank = true; blankCount++}
 
     if (blankCount > 2) {
-        alert('Maximum amount of blank variables is 2, please check inputs for errors.')
+        alert('Slurry Concentration Converter: Maximum amount of blank variables is 2, please check inputs for errors.')
         return
     }
 
     if (blankCount < 2) {
-        alert('Please leave 2 variables blank at all times.')
+        alert('Slurry Concentration Converter: Please leave 2 variables blank at all times.')
         return
     }
 
@@ -131,39 +131,97 @@ function vtmCompute () {
     }
 
     let s = parseFloat(document.getElementById('S').value)
-    let sm = parseFloat(document.getElementById('Sm').value)
+    let sw = parseFloat(document.getElementById('Sw').value)
     let cw = parseFloat(document.getElementById('Cw').value)/100
     let cv = parseFloat(document.getElementById('Cv').value)/100
-    let vfr = parseFloat(document.getElementById('vfr').value)
-    let mfr = parseFloat(document.getElementById('mfr').value)*1000
+    let mfrs = parseFloat(document.getElementById('mfrs').value)
+    let mfrl = parseFloat(document.getElementById('mfrl').value)
+    let mfrm = parseFloat(document.getElementById('mfrm').value)
+    let vfrl = parseFloat(document.getElementById('vfrl').value)
+    let vfrm = parseFloat(document.getElementById('vfrm').value)
 
-    let roS = s*1000
-    let roSm = sm*1000
+    let mfrsBlank = false
+    let mfrlBlank = false
+    let mfrmBlank = false
+    let vfrlBlank = false
+    let vfrmBlank = false
 
-    let vfrBlank = false
-    let mfrBlank = false
-    if (isNaN(vfr)) {vfrBlank = true}
-    if (isNaN(mfr)) {mfrBlank = true}
+    let blankCount = 0
 
-    if (vfrBlank && mfrBlank) {
-        alert('Please complete only one of the fields to continue.')
+    if (isNaN(mfrs)) {mfrsBlank = true; blankCount++}
+    if (isNaN(mfrl)) {mfrlBlank = true; blankCount++}
+    if (isNaN(mfrm)) {mfrmBlank = true; blankCount++}
+    if (isNaN(vfrl)) {vfrlBlank = true; blankCount++}
+    if (isNaN(vfrm)) {vfrmBlank = true; blankCount++}
+
+    let blankCountPrevSection = 0
+
+    if (isNaN(sw)) {blankCountPrevSection++}
+    if (isNaN(s)) {blankCountPrevSection++}
+    if (isNaN(cw)) {blankCountPrevSection++}
+    if (isNaN(cv)) {blankCountPrevSection++}
+
+    if (blankCount != 4) {
+        alert('Volume to Mass Flow Converter: Please input only one value and leave the rest blank.')
         return
     }
 
-    if (vfrBlank==false && mfrBlank==false) {
-        alert('Please complete only one of the fields to continue.')
+    if (blankCountPrevSection != 0) {
+        alert('Volume to Mass Flow Converter: Please fill out all of the values in the Slurry Conversion section before using this section of the calculator.')
         return
     }
 
-    // compute VFR
-    if (vfrBlank) {
-        vfr = (mfr/cw)/roSm
-        replaceResults(vfr, 'vfr', 'vfr-text')
-    } else { // mfrBlank true
-        mfr = vfr*cv*roS
-        mfr = mfr/1000 // from kg to tn
-        replaceResults(mfr, 'mfr', 'mfr-text')
-    }   
+    if (mfrsBlank == false) {
+        mfrl = (mfrs-cw*mfrs)/cw
+        mfrm = mfrs + mfrl
+        vfrl = mfrl/sw
+        vfrm = (mfrs/s)+(mfrl/sw)
+
+        replaceResults(mfrl, 'mfrl', 'mfrl-text')
+        replaceResults(mfrm, 'mfrm', 'mfrm-text')
+        replaceResults(vfrl, 'vfrl', 'vfrl-text')
+        replaceResults(vfrm, 'vfrm', 'vfrm-text')
+    } else if (mfrlBlank == false) {
+        mfrs = (cw*mfrl)/(1-cw)
+        mfrm = mfrs + mfrl
+        vfrl = mfrl/sw
+        vfrm = (mfrs/s)+(mfrl/sw)
+
+        replaceResults(mfrs, 'mfrs', 'mfrs-text')
+        replaceResults(mfrm, 'mfrm', 'mfrm-text')
+        replaceResults(vfrl, 'vfrl', 'vfrl-text')
+        replaceResults(vfrm, 'vfrm', 'vfrm-text')
+    } else if (mfrmBlank == false) {
+        mfrs = cw*mfrm
+        mfrl = mfrm - mfrs
+        vfrl = mfrl/sw
+        vfrm = (mfrs/s)+(mfrl/sw)
+
+        replaceResults(mfrs, 'mfrs', 'mfrs-text')
+        replaceResults(mfrl, 'mfrl', 'mfrl-text')
+        replaceResults(vfrl, 'vfrl', 'vfrl-text')
+        replaceResults(vfrm, 'vfrm', 'vfrm-text')
+    } else if (vfrlBlank == false) {
+        mfrl = vfrl*sw
+        mfrs = (cw*mfrl)/(1-cw)
+        mfrm = mfrs + mfrl
+        vfrm = (mfrs/s)+(mfrl/sw)
+
+        replaceResults(mfrl, 'mfrl', 'mfrl-text')
+        replaceResults(mfrm, 'mfrm', 'mfrm-text')
+        replaceResults(mfrs, 'mfrs', 'mfrs-text')
+        replaceResults(vfrm, 'vfrm', 'vfrm-text')
+    } else if (vfrmBlank == false) {
+        vfrl = cv*vfrm
+        mfrl = vfrl*sw
+        mfrs = (cw*mfrl)/(1-cw)
+        mfrm = mfrs + mfrl
+
+        replaceResults(mfrl, 'mfrl', 'mfrl-text')
+        replaceResults(mfrm, 'mfrm', 'mfrm-text')
+        replaceResults(mfrs, 'mfrs', 'mfrs-text')
+        replaceResults(vfrl, 'vfrl', 'vfrl-text')
+    }
 }
 
 function replaceResults(result, valueId, spanId) {
@@ -195,8 +253,11 @@ function clearResults(section) {
             document.getElementById('Cv').value = ''
             break
         case '2':
-            document.getElementById('vfr').value = ''
-            document.getElementById('mfr').value = ''
+            document.getElementById('vfrl').value = ''
+            document.getElementById('vfrm').value = ''
+            document.getElementById('mfrs').value = ''
+            document.getElementById('mfrl').value = ''
+            document.getElementById('mfrm').value = ''
     }
 
 }

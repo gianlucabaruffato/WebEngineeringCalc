@@ -1,3 +1,11 @@
+let common
+
+(async () => {
+    common = await import('./common.js');
+})()
+
+
+
 const g = 32.17 // ft/s2
 
 function mainCompute() {
