@@ -23,3 +23,16 @@ export function fFactor(re, rr) { //Reynolds and relative roughness
 
     return f
 }
+
+export function rotateArrow(id) {
+    const element = document.getElementById(id)
+
+    if (isArrowRotated == false) {
+        element.classList.add("rotated")
+        isArrowRotated = true
+    } else {
+        element.classList.remove("rotated")
+        isArrowRotated = false
+
+    }
+}

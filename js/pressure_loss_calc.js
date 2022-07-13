@@ -107,11 +107,11 @@ function plCompute() {
             break
     }
 
-    let reynolds = ro*v/mu // No L becouse assume L = 1
+    let reynolds = ro*v*di/mu
 
     let f = common.fFactor(reynolds, rr)
 
-    let pl = f*v**2/(di*2*gMetric)
+    let pl = f*v**2*ro/(di*2)
     pl = Math.round(pl * 1e3) / 1e3
 
     document.getElementById('i').value = pl

@@ -322,3 +322,8 @@ input[type=number] {
     padding-bottom: 4px;
     margin-top: 4px;
 }
+
+.HL-units {
+    width: 66px;
+    padding-left: 6px;
+}
