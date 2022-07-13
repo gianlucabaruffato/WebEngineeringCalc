@@ -259,5 +259,38 @@ function clearResults(section) {
             document.getElementById('mfrl').value = ''
             document.getElementById('mfrm').value = ''
     }
-
 }
+
+let prevWidth = 0
+
+function resizeInputs() {
+    if (screen.width > 800  && prevWidth != screen.width) {
+        $('#cv-text').html('Volume Concentration (Cv)')
+        $('#cw-text').html('Weight Concentration (Cw)')
+        $('#sm-text').html('SG of mixture (SG<sub>m</sub>)')
+        $('#mfrs-text').html('Mass Flow Rate (Solids)')
+        $('#mfrl-text').html('Mass Flow Rate (Liquid)')
+        $('#mfrm-text').html('Mass Flow Rate (Mixture)')
+        $('#vfrl-text').html('Volume Flow Rate (Liquid)')
+        $('#vfrm-text').html('Volume Flow Rate (Mixture)')
+
+        prevWidth = screen.width
+    } else if (screen.width <= 800  && prevWidth != screen.width){
+        $('#cv-text').html('Vol. Concent. (Cv)')
+        $('#cw-text').html('Wgt. Concent. (Cw)')
+        $('#sm-text').html('SG of mixt. (SG<sub>m</sub>)')
+        $('#mfrs-text').html('Mass Flow (Solids)')
+        $('#mfrl-text').html('Mass Flow (Liquid)')
+        $('#mfrm-text').html('Mass Flow (Mixture)')
+        $('#vfrl-text').html('Vol. Flow (Liquid)')
+        $('#vfrm-text').html('Vol. Flow (Mixture)')
+
+        prevWidth = screen.width
+    }
+}
+
+resizeInputs()
+
+window.addEventListener('resize', function(event){
+    resizeInputs()
+})

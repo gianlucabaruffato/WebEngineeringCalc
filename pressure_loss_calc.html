@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pressure Loss</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.0-beta1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-0evHe/X+R7YkIZDRvuzKMRqM+OrBnVFBL6DOitfPri4tjfHxaWutUpFmBp4vmVor" crossorigin="anonymous">
+    <script src="js/jquery-3.6.0.min.js"></script>
     <link rel="stylesheet" href="css/styles.css">
 </head>
 <body class="body">
@@ -21,7 +22,7 @@
                     <div class="card-body">
                         <div id="input_fields">
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Particle Size (d50)</span>
+                                <span class="input-group-text durand-input-text" id="d50-text">Particle Size (d50)</span>
                                 <input type="number" step="0.01" max="2000" min="10" id="d50" class="form-control">
                                 <select class="form-select unit-dropdown" id="d50-units">
                                     <option value="0" selected>μm</option>
@@ -30,7 +31,7 @@
                                 </select>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Internal Diameter (Di)</span>
+                                <span class="input-group-text durand-input-text" id="di-text">Internal Diameter (Di)</span>
                                 <input type="number" step="0.01" id="Di" class="form-control">
                                 <select class="form-select unit-dropdown" id="di-units">
                                     <option value="0">μm</option>
@@ -39,38 +40,59 @@
                                 </select>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Volume Concentration (Cv)</span>
+                                <span class="input-group-text durand-input-text" id="cv-text">Volume Concentration (Cv)</span>
                                 <input type="number" id="cv" class="form-control">
-                                <span class="input-group-text">%</span>
+                                <span class="input-group-text justify-content-center">%</span>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Flow Velocity (V)</span>
+                                <span class="input-group-text durand-input-text" id="v-text">Flow Velocity (V)</span>
                                 <input type="number" id="V" class="form-control">
-                                <span class="input-group-text input-text-last-PL">m/s</span>
+                                <span class="input-group-text input-text-last-PL justify-content-center">m/s</span>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Settling Velocity (Vs)</span>
+                                <span class="input-group-text durand-input-text" id="vs-text">Settling Velocity (Vs)</span>
                                 <input type="number" id="Vs" class="form-control">
-                                <span class="input-group-text input-text-last-PL">m/s</span>
+                                <span class="input-group-text input-text-last-PL justify-content-center">m/s</span>
                             </div>
                             <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">SG of Solids (SG<sub>s</sub>)</span>
+                                <span class="input-group-text durand-input-text" id="s-text">SG of Solids (SG<sub>s</sub>)</span>
                                 <input type="number" id="S" class="form-control">
                             </div>
-                            <div class="input-group mb-3">
-                                <span class="input-group-text durand-input-text">Liquid Pressure Loss (i)</span>
+                            <div class="input-group mb-2">
+                                <span class="input-group-text durand-input-text" id="i-text">Liquid Pressure Loss (i)</span>
                                 <input type="number" id="i" class="form-control">
-                                <a class="input-group-text input-text-last-PL" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample">🡳</a>
+                                <btn class="input-group-text input-text-last-PL justify-content-center" data-bs-toggle="collapse" href="#collapseExample" role="button" aria-expanded="false" aria-controls="collapseExample" onclick="rotateArrow()">
+                                    <span id="rotating-arrow" class="collapse-arrow rotated-transition">▼</span>
+                                </btn>
                             </div>
                             <div class="collapse" id="collapseExample">
                                 <div class="collapse-body">
                                     <div class="collapse-contents">
-                                        Liquid Pressure Loss per unit of length:
+                                        <span class="info-text">Liquid Pressure Loss per unit of length [Pa/m]:</span> 
+                                        <hr class="mt-0 mb-2">
+                                        <div class="d-lg-flex justify-content-center">
+                                            <div class="input-group mb-1 input-PL-collapse me-3 ">
+                                                <span class="input-group-text input-factor">ρ</span>
+                                                <input type="number" id="ro" class="form-control" value="1000">
+                                                <span class="input-group-text justify-content-center" style="width: 50px; font-size: small;">kg/m<sup>3</sup></span>
+                                            </div>
+                                            <div class="input-group mb-1 input-PL-collapse me-3">
+                                                <span class="input-group-text input-factor justify-content-center">µ</span>
+                                                <input type="number" id="mu" class="form-control" value="0.001">
+                                                <span class="input-group-text justify-content-center" style="width: 50px; font-size: small;">Pa*s</span>
+                                            </div>
+                                            <div class="input-group mb-1 input-PL-collapse">
+                                                <span class="input-group-text input-factor justify-content-center">ε/d</span>
+                                                <input type="number" id="rr" class="form-control">
+                                            </div>
+                                        </div>
+                                        <button class="btn btn-outline-secondary input-PL-button" type="button" onclick="plCompute()">Calculate (i)</button>
+
                                     </div>
                                 </div>
                             </div>
                             <div class="d-flex justify-content-between">
-                                <div class="input-group mb-3 mt-2" id="calculate-button">
+                                <div class="input-group mb-1 mt-2" id="calculate-button">
                                     <button class="btn btn-primary" type="button" onclick="mainCompute()">Calculate</button>
                                 </div>
                             </div>
@@ -98,7 +120,7 @@
                             <div class="input-group mb-3">
                                 <span class="input-group-text pres-loss-results">Optimal velocity (V<sub>o</sub>)</span>
                                 <span class="form-control" id="vo">-</span>
-                                <span class="input-group-text input-text-last-PL">m/s</span>
+                                <span class="input-group-text input-text-last-PL justify-content-center">m/s</span>
                             </div>
                         </div>
                     </div>

@@ -4,9 +4,23 @@ let common
     common = await import('./common.js');
 })()
 
-
-
 const g = 32.17 // ft/s2
+const gMetric = 9.81 // m/s2
+
+let isArrowRotated = false
+
+function rotateArrow() {
+    const element = document.getElementById('rotating-arrow')
+
+    if (isArrowRotated == false) {
+        element.classList.add("rotated")
+        isArrowRotated = true
+    } else {
+        element.classList.remove("rotated")
+        isArrowRotated = false
+
+    }
+}
 
 function mainCompute() {
     let d50 = parseFloat(document.getElementById('d50').value)
@@ -67,3 +81,63 @@ function replaceResults(parameter, slurryPres, vo) {
     document.getElementById('slurry-pres').innerHTML = slurryPres.toFixed(3)
     document.getElementById('vo').innerHTML = vo.toFixed(3)
 }
+
+function plCompute() {
+    let di = parseFloat(document.getElementById('Di').value)
+    let v = parseFloat(document.getElementById('V').value)
+    let mu = parseFloat(document.getElementById('mu').value)
+    let ro = parseFloat(document.getElementById('ro').value)
+    let rr = parseFloat(document.getElementById('rr').value)
+
+    if (isNaN(di) || isNaN(v) || isNaN(mu) || isNaN(ro) || isNaN(rr)) {
+        alert('Please check that Di, V, density, viscosity and relative roughness are input correctly.')
+        return
+    }
+
+    let diUnitsValue = document.getElementById('di-units').value
+    switch (diUnitsValue) { 
+        case '0': // input um
+            di = di/1e6
+            break
+        case '1': // input mm
+            di = di/1e3
+            break
+        case '2': // input m
+            di = di
+            break
+    }
+
+    let reynolds = ro*v/mu // No L becouse assume L = 1
+
+    let f = common.fFactor(reynolds, rr)
+
+    let pl = f*v**2/(di*2*gMetric)
+    pl = Math.round(pl * 1e3) / 1e3
+
+    document.getElementById('i').value = pl
+}
+
+let prevWidth = 0
+
+function resizeInputs() {
+    if (screen.width > 800  && prevWidth != screen.width) {
+        $('#cv-text').html('Volume Concentration (Cv)')
+        $('#di-text').html('Internal Diameter (Di)')
+        $('#i-text').html('Liquid Pressure Loss (i)')
+        $('#vs-text').html('Settling Velocity (Vs)')
+        prevWidth = screen.width
+    } else if (screen.width <= 800  && prevWidth != screen.width){
+        $('#cv-text').html('Vol. Concent. (Cv)')
+        $('#di-text').html('Int. Diameter (Di)')
+        $('#i-text').html('Liq. Press. Loss (i)')
+        $('#vs-text').html('Settling Vel. (Vs)')
+
+        prevWidth = screen.width
+    }
+}
+
+resizeInputs()
+
+window.addEventListener('resize', function(event){
+    resizeInputs()
+})
